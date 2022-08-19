@@ -1,3 +1,5 @@
+import 'package:chat_app/provider/audio_provider.dart';
+import 'package:chat_app/provider/chat_provider.dart';
 import 'package:chat_app/provider/user_data_provider.dart';
 import 'package:chat_app/screens/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,18 +19,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
+      providers: [
         ChangeNotifierProvider<UserDataProvider>(
-        create: (_) => UserDataProvider(),
-    ),
-    ],
-        child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Chat App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+          create: (_) => UserDataProvider(),
+        ),
+        ChangeNotifierProvider<ChatProvider>(
+          create: (_) => ChatProvider(),
+        ),
+        ChangeNotifierProvider<AudioProvider>(
+          create: (_) => AudioProvider(),
+        ),
+      ],
+      child:  MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Chat App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const SplashScreen(),
       ),
-      home: const SplashScreen(),
-    ));
+
+    );
   }
 }

@@ -25,26 +25,31 @@ class _SettingsState extends State<Settings> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(height: 30, color: primaryColor,),
-            Container(
-              color: primaryColor,
-              child: Row(
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Consumer<UserDataProvider>(
+              builder: (context,user,child){
+                return Container(
+                  color: primaryColor,
+                  child: Row(
                     children: <Widget>[
-                      Text(provider.userData!.name.toString(), style: TextStyle(color: colorWhite,fontSize: 24, fontWeight: FontWeight.bold)),
-                      // Text("View and edit profile", style: TextStyle(color: textColor)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(user.userData!.name!, style: TextStyle(color: colorWhite,fontSize: 24, fontWeight: FontWeight.bold)),
+                          // Text("View and edit profile", style: TextStyle(color: textColor)),
+                        ],
+                      ),
+                      Spacer(),
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(user.userData!.profilePicture!),
+                        radius:50,
+                      ),
                     ],
                   ),
-                  Spacer(),
-                  CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/me.png'),
-                    radius:50,
-                  ),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+                );
+              },
             ),
+
             InkWell(
               onTap: (){},
               child: Container(
