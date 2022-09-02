@@ -7,6 +7,7 @@ const colorBlack=Color(0xff000000);
 const textColor=Colors.blueGrey;
 const backgroundColor= Color(0xffF8F8F8);
 const meChatBubble= Color(0xffEFFFDE);
+const meReplyChatBubble= Color(0xfff7ffee);
 
 String prettyDuration(Duration d) {
   var min = d.inMinutes < 10 ? "0${d.inMinutes}" : d.inMinutes.toString();

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 class SocialChatModel{
-  String id,senderId,mediaType,message,groupId;
+  String id,senderId,mediaType,message,groupId,replyId;
+  bool isReply;
   int dateTime;
 
 
@@ -11,6 +12,8 @@ class SocialChatModel{
         mediaType = map['mediaType']??"",
         message = map['message']??"",
         groupId = map['groupId']??"",
+        replyId = map['replyId']??"",
+        isReply = map['isReply']??false,
         dateTime = map['dateTime']??"";
 
 

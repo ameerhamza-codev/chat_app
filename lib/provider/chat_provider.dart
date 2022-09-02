@@ -7,11 +7,34 @@ import 'package:permission_handler/permission_handler.dart';
 
 class ChatProvider extends ChangeNotifier {
   bool _showSend=false;
+  bool _reply=false;
+  bool _options=false;
+  var _selectedModel=null;
+
 
   bool get showSend => _showSend;
+  bool get options => _options;
+
+  get selectedModel => _selectedModel;
+
+  bool get reply => _reply;
 
   void setShowSend(bool value) {
     _showSend = value;
+    notifyListeners();
+  }
+
+  void setReply(bool value) {
+    _reply = value;
+    notifyListeners();
+  }
+  void setSelectedModel(value) {
+    _selectedModel = value;
+    notifyListeners();
+  }
+
+  void setOptions(bool value) {
+    _options = value;
     notifyListeners();
   }
 
