@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chat_app/model/social_chat_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,7 +10,7 @@ class ChatProvider extends ChangeNotifier {
   bool _showSend=false;
   bool _reply=false;
   bool _options=false;
-  var _selectedModel=null;
+  SocialChatModel? _selectedModel;
 
 
   bool get showSend => _showSend;

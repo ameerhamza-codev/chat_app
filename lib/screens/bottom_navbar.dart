@@ -1,6 +1,7 @@
 
 import 'package:chat_app/screens/bottomnav_screens/chat_screen.dart';
 import 'package:chat_app/screens/bottomnav_screens/groups.dart';
+import 'package:chat_app/screens/bottomnav_screens/main_chat.dart';
 import 'package:chat_app/screens/bottomnav_screens/settings.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class _BottomNavigationState extends State<BottomNavBar>{
   void initState() {
     super.initState();
     _children = const [
-       ChatScreen(),
+       MainChat(),
        Groups(),
        Settings()
     ];

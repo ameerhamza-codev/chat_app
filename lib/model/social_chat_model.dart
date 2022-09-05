@@ -1,7 +1,9 @@
+import 'package:chat_app/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 class SocialChatModel{
-  String id,senderId,mediaType,message,groupId,replyId;
-  bool isReply;
+  String id,senderId,mediaType,message,groupId,replyId,receiverId,messageType;
+  bool isReply,forwarded,isRead;
+
   int dateTime;
 
 
@@ -10,6 +12,10 @@ class SocialChatModel{
       : id=key,
         senderId = map['senderId']??"",
         mediaType = map['mediaType']??"",
+        receiverId = map['receiverId']??"all",
+        messageType = map['messageType']??MessageType.social,
+        forwarded = map['forwarded']??false,
+        isRead = map['isRead']??false,
         message = map['message']??"",
         groupId = map['groupId']??"",
         replyId = map['replyId']??"",
