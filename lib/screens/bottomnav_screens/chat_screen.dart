@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart';
 import '../../provider/user_data_provider.dart';
 import '../../utils/global.dart';
+import '../forward_message.dart';
 
 class ChatScreen extends StatefulWidget {
   String messageType;
@@ -212,7 +213,7 @@ class _IndividualChatState extends State<ChatScreen> {
                                     chat.setOptions(true);
                                     chat.setSelectedModel(model);
                                   },
-                                  child: model.isReply?buildReplyItem(context, model):model.message=="uploading"?ChatWidget.loader(context, model.senderId==FirebaseAuth.instance.currentUser!.uid?true:false, model.senderId):buildListItemView(context,model),
+                                  child: model.isReply?buildReplyItem(context, model,chat.selectedModel==null?"":chat.selectedModel.id):model.message=="uploading"?ChatWidget.loader(context, model.senderId==FirebaseAuth.instance.currentUser!.uid?true:false, model.senderId):buildListItemView(context,model,chat.selectedModel==null?"":chat.selectedModel.id),
                                 );
                               },
                             );
@@ -462,11 +463,8 @@ class _IndividualChatState extends State<ChatScreen> {
                                   if(widget.messageType!=MessageType.social)
                                     IconButton(
                                       onPressed: ()async{
-                                        await FirebaseFirestore.instance.collection('social_chat').doc(chat.selectedModel.id).delete().then((value){
-                                          chat.setOptions(false);
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ForwardMessage(chat.selectedModel)));
 
-
-                                        });
                                       },
                                       icon: Icon(Icons.forward),
                                     ),
@@ -534,11 +532,12 @@ class _IndividualChatState extends State<ChatScreen> {
 
 
 
-  Widget buildListItemView(BuildContext context,SocialChatModel item){
+  Widget buildListItemView(BuildContext context,SocialChatModel item,selectedId){
     bool isMe = item.senderId==FirebaseAuth.instance.currentUser!.uid?true:false;
+    bool isSelected=selectedId==item.id;
 
     return Container(
-
+      color: isSelected?Colors.grey[400]:Colors.grey[300],
       child: Wrap(
         alignment: isMe ? WrapAlignment.end : WrapAlignment.start,
         children: <Widget>[
@@ -602,93 +601,95 @@ class _IndividualChatState extends State<ChatScreen> {
 
 
 
-  Widget buildReplyItem(BuildContext context,SocialChatModel item){
+  Widget buildReplyItem(BuildContext context,SocialChatModel item,selectedId){
     bool isMe = item.senderId==FirebaseAuth.instance.currentUser!.uid?true:false;
-    return  Wrap(
-      alignment: isMe ? WrapAlignment.end : WrapAlignment.start,
-      children: <Widget>[
-        isMe ? Container(): Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: FutureBuilder<AppUser>(
-              future: DBApi.getUserData(item.senderId),
-              builder: (context, AsyncSnapshot<AppUser> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircleAvatar(
-                    backgroundColor: primaryColor,
-                    maxRadius: 20,
-                    minRadius: 20,
-                  );
-                }
-                else {
-                  if (snapshot.hasError) {
-                    print("error ${snapshot.error}");
+    bool isSelected=selectedId==item.id;
+    return  Container(
+      color: isSelected?Colors.grey[400]:Colors.grey[300],
+      child: Wrap(
+        alignment: isMe ? WrapAlignment.end : WrapAlignment.start,
+        children: <Widget>[
+          isMe ? Container(): Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: FutureBuilder<AppUser>(
+                future: DBApi.getUserData(item.senderId),
+                builder: (context, AsyncSnapshot<AppUser> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircleAvatar(
                       backgroundColor: primaryColor,
                       maxRadius: 20,
                       minRadius: 20,
                     );
                   }
-
-
                   else {
-                    return CircleAvatar(
-                      backgroundImage: NetworkImage(snapshot.data!.profilePicture!),
-                      maxRadius: 20,
-                      minRadius: 20,
-                    );
+                    if (snapshot.hasError) {
+                      print("error ${snapshot.error}");
+                      return CircleAvatar(
+                        backgroundColor: primaryColor,
+                        maxRadius: 20,
+                        minRadius: 20,
+                      );
+                    }
 
+
+                    else {
+                      return CircleAvatar(
+                        backgroundImage: NetworkImage(snapshot.data!.profilePicture!),
+                        maxRadius: 20,
+                        minRadius: 20,
+                      );
+
+                    }
                   }
                 }
-              }
+            ),
           ),
-        ),
-        Card(
-            shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(5),),
-            margin: EdgeInsets.fromLTRB(isMe ? 20 : 10, 5, isMe ? 10 : 20, 5),
-            color: isMe ? meChatBubble : Colors.white, elevation: 1,
-            child : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              child:  Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(7)
-                    ),
-                    margin: EdgeInsets.all(2),
-                    padding: EdgeInsets.all(2),
-                    child: FutureBuilder<SocialChatModel>(
-                        future: DBApi.getSocialChat(item.replyId),
-                        builder: (context, AsyncSnapshot<SocialChatModel> snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return CupertinoActivityIndicator();
-                          }
-                          else {
-                            if (snapshot.hasError) {
-                              print("error ${snapshot.error}");
-                              return CircleAvatar(
-                                backgroundColor: primaryColor,
-                                maxRadius: 20,
-                                minRadius: 20,
-                              );
+          Card(
+              shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(5),),
+              margin: EdgeInsets.fromLTRB(isMe ? 20 : 10, 5, isMe ? 10 : 20, 5),
+              color: isMe ? meChatBubble : Colors.white, elevation: 1,
+              child : Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                child:  Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(7)
+                      ),
+                      margin: EdgeInsets.all(2),
+                      padding: EdgeInsets.all(2),
+                      child: FutureBuilder<SocialChatModel>(
+                          future: DBApi.getSocialChat(item.replyId),
+                          builder: (context, AsyncSnapshot<SocialChatModel> snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CupertinoActivityIndicator();
                             }
-
-
                             else {
-                              return ChatWidget.reply(context, snapshot.data!.message, snapshot.data!.mediaType,snapshot.data!.dateTime);
+                              if (snapshot.hasError) {
+                                print("error ${snapshot.error}");
+                                return CircleAvatar(
+                                  backgroundColor: primaryColor,
+                                  maxRadius: 20,
+                                  minRadius: 20,
+                                );
+                              }
 
 
+                              else {
+                                return ChatWidget.reply(context, snapshot.data!.message, snapshot.data!.mediaType,snapshot.data!.dateTime);
+
+
+                              }
                             }
                           }
-                        }
+                      ),
                     ),
-                  ),
-                  ChatWidget.reply(context, item.message, item.mediaType,item.dateTime)
-                ],
-              ),
-            )
-        ),
-          
+                    ChatWidget.reply(context, item.message, item.mediaType,item.dateTime)
+                  ],
+                ),
+              )
+          ),
 
 
 
@@ -696,7 +697,9 @@ class _IndividualChatState extends State<ChatScreen> {
 
 
 
-      ],
+
+        ],
+      ),
     );
   }
   Future bottomSheet(BuildContext context) {

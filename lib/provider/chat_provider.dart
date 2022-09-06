@@ -27,6 +27,8 @@ class ChatProvider extends ChangeNotifier {
 
   void setReply(bool value) {
     _reply = value;
+    if(!_reply)
+      setSelectedModel(null);
     notifyListeners();
   }
   void setSelectedModel(value) {
@@ -36,6 +38,8 @@ class ChatProvider extends ChangeNotifier {
 
   void setOptions(bool value) {
     _options = value;
+    if(!_options)
+      setSelectedModel(null);
     notifyListeners();
   }
 

@@ -41,6 +41,23 @@ class DBApi{
     return res.id;
   }
 
+  static Future<String> forwardMessage(SocialChatModel chat,receiverId,messageType)async{
+    var res=await FirebaseFirestore.instance.collection('social_chat').add({
+      "senderId":FirebaseAuth.instance.currentUser!.uid,
+      "receiverId":receiverId,
+      "messageType":messageType,
+      "forwarded":true,
+      "mediaType":chat.mediaType,
+      "isRead":false,
+      "message":chat.message,
+      "groupId":receiverId,
+      "isReply":false,
+      "replyId":"",
+      "dateTime":DateTime.now().millisecondsSinceEpoch,
+    });
+    return res.id;
+  }
+
   static Future<AppUser> getUserData(String id)async{
     AppUser? request;
     await FirebaseFirestore.instance.collection('users')
