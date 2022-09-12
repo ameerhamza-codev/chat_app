@@ -11,6 +11,7 @@ class IndividualChat extends StatefulWidget {
 
 class _IndividualChatState extends State<IndividualChat> {
 
+
   @override
   Widget build(BuildContext context) {
 

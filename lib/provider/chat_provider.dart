@@ -38,13 +38,17 @@ class ChatProvider extends ChangeNotifier {
 
   void setOptions(bool value) {
     _options = value;
-    if(!_options)
-      setSelectedModel(null);
     notifyListeners();
   }
 
   ChatProvider(){
     initRecorder();
+  }
+  void chatReset(){
+    setOptions(false);
+    setReply(false);
+    setSelectedModel(null);
+    notifyListeners();
   }
   bool isRecordReady=false;
   final recorder=FlutterSoundRecorder();
@@ -71,4 +75,6 @@ class ChatProvider extends ChangeNotifier {
     recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
 
   }
+
+
 }

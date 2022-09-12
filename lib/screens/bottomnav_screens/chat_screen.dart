@@ -212,8 +212,13 @@ class _IndividualChatState extends State<ChatScreen> {
                                   onLongPress: (){
                                     chat.setOptions(true);
                                     chat.setSelectedModel(model);
+                                    print("${chat.selectedModel==null?"null id":"this is the id"}");
                                   },
-                                  child: model.isReply?buildReplyItem(context, model,chat.selectedModel==null?"":chat.selectedModel.id):model.message=="uploading"?ChatWidget.loader(context, model.senderId==FirebaseAuth.instance.currentUser!.uid?true:false, model.senderId):buildListItemView(context,model,chat.selectedModel==null?"":chat.selectedModel.id),
+                                  child: model.isReply?buildReplyItem(context, model,chat.selectedModel==null?"":chat.selectedModel.id):
+                                  model.message=="uploading"?
+                                  ChatWidget.loader(context, model.senderId==FirebaseAuth.instance.currentUser!.uid?true:false, model.senderId)
+                                      :
+                                  buildListItemView(context,model,chat.selectedModel==null?"":chat.selectedModel.id),
                                 );
                               },
                             );
@@ -604,6 +609,8 @@ class _IndividualChatState extends State<ChatScreen> {
   Widget buildReplyItem(BuildContext context,SocialChatModel item,selectedId){
     bool isMe = item.senderId==FirebaseAuth.instance.currentUser!.uid?true:false;
     bool isSelected=selectedId==item.id;
+    print("reply selected");
+    print("media type ${item.mediaType}");
     return  Container(
       color: isSelected?Colors.grey[400]:Colors.grey[300],
       child: Wrap(

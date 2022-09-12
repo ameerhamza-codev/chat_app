@@ -56,7 +56,7 @@ class _MainChatState extends State<MainChat> {
             Stack(
               children: [
                 FutureBuilder<List<ChatHeadModel>>(
-                    future: DBApi.getIndividualChats(),
+                    future: DBApi.getIndividualChats(context),
                     builder: (context, AsyncSnapshot<List<ChatHeadModel>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(

@@ -1,15 +1,21 @@
 import 'package:chat_app/model/chat_head_model.dart';
 import 'package:chat_app/model/social_chat_model.dart';
+import 'package:chat_app/provider/chat_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../model/user_model_class.dart';
+import '../provider/user_data_provider.dart';
 import '../utils/constants.dart';
 
 class DBApi{
 
 
-  static Future<List<ChatHeadModel>> getIndividualChats()async{
+  static Future<List<ChatHeadModel>> getIndividualChats(BuildContext context)async{
+    final provider = Provider.of<ChatProvider>(context, listen: false);
+    provider.chatReset();
     List<ChatHeadModel> chats=[];
     await FirebaseFirestore.instance.collection('chat_head').get().then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
