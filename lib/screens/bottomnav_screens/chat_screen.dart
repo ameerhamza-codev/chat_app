@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -373,6 +374,7 @@ class _IndividualChatState extends State<ChatScreen> {
 
                                             onPressed: () async{
                                               sendMessage(widget.chatheadId,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id);
+                                              chat.setShowSend(false);
                                             }
                                         )
                                       else
@@ -388,10 +390,10 @@ class _IndividualChatState extends State<ChatScreen> {
                                                 },
                                                 child: Icon(Icons.attach_file, color: textColor.shade200),
                                               ),
-                                            IconButton(
-                                                icon: Icon(chat.recorder.isRecording?Icons.stop:Icons.mic, color: chat.recorder.isRecording?Colors.redAccent:Colors.blue),
+                                            InkWell(
+                                                child: Icon(chat.recorder.isRecording?Icons.stop:Icons.mic, color: chat.recorder.isRecording?Colors.redAccent:Colors.blue),
 
-                                                onPressed: () async{
+                                                onTap: () async{
                                                   if(chat.recorder.isRecording){
                                                     File audioFile=await chat.stop();
                                                     chat.setReply(false);
@@ -452,9 +454,9 @@ class _IndividualChatState extends State<ChatScreen> {
                                       chat.setReply(true);
                                       chat.setOptions(false);
                                     },
-                                    icon: Icon(Icons.reply),
+                                    icon: Icon(FontAwesomeIcons.reply),
                                   ),
-                                  if(chat.selectedModel!.senderId!=FirebaseAuth.instance.currentUser!.uid)
+                                  if(chat.selectedModel.senderId==FirebaseAuth.instance.currentUser!.uid)
                                     IconButton(
                                       onPressed: ()async{
                                         await FirebaseFirestore.instance.collection('social_chat').doc(chat.selectedModel.id).delete().then((value){
@@ -471,7 +473,7 @@ class _IndividualChatState extends State<ChatScreen> {
                                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ForwardMessage(chat.selectedModel)));
 
                                       },
-                                      icon: Icon(Icons.forward),
+                                      icon: Icon(FontAwesomeIcons.share),
                                     ),
                                 ],
                               )
