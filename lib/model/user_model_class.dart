@@ -8,6 +8,8 @@ class AppUser{
          subGroup1, subGroup1Code, subGroup2, subGroup2Code, subGroup3, subGroup3Code, subGroup4, subGroup4Code,profilePicture;
   int? createdAt;
   bool? action, group, refer, subGroup1Representative, subGroup2Representative, subGroup3Representative, subGroup4Representative;
+  bool expatriates,associatidWithAddRes;
+  bool isAdmin;
 
 
 
@@ -50,6 +52,9 @@ class AppUser{
         subGroup1Representative=map['subGroup1Representative']??false,
         subGroup2Representative=map['subGroup2Representative']??false,
         subGroup3Representative=map['subGroup3Representative']??false,
+        expatriates=map['expatriates']??true,
+        isAdmin=map['isAdmin']??false,
+        associatidWithAddRes=map['associatidWithAddRes']??true,
         subGroup4Representative=map['subGroup4Representative']??false;
 
 

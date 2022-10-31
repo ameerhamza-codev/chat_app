@@ -88,8 +88,7 @@ class _SearchIndividualState extends State<SearchIndividual> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance.collection('users')
-                    .where("email",isNotEqualTo: FirebaseAuth.instance.currentUser!.email).
-                    where("subGroup3Code",isEqualTo: provider.userData!.subGroup3Code).snapshots(),
+                    .where("email",isNotEqualTo: FirebaseAuth.instance.currentUser!.email).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     print(snapshot.error.toString());

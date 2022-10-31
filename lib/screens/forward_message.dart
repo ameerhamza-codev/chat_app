@@ -10,7 +10,7 @@ import '../model/user_model_class.dart';
 import '../provider/user_data_provider.dart';
 import '../utils/constants.dart';
 class ForwardMessage extends StatefulWidget {
-  SocialChatModel chat;
+  List<SocialChatModel> chat;
 
   ForwardMessage(this.chat);
 
@@ -114,7 +114,10 @@ class _ForwardMessageState extends State<ForwardMessage> {
                     trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
                     title: Text(provider.userData!.subGroup3!),
                     onTap: ()async{
-                      await DBApi.forwardMessage(widget.chat, provider.userData!.subGroup3Code, MessageType.group);
+                      widget.chat.forEach((element) async{
+                        await DBApi.forwardMessage(element, provider.userData!.subGroup3Code, MessageType.group);
+                      });
+                      chat.clearSelectedList();
                       chat.setOptions(false);
                       Navigator.pop(context);
                       //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, provider.userData!.subGroup3Code!)));
@@ -138,7 +141,10 @@ class _ForwardMessageState extends State<ForwardMessage> {
                     trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
                     title: Text(provider.userData!.subGroup4!),
                     onTap: ()async{
-                      await DBApi.forwardMessage(widget.chat, provider.userData!.subGroup4Code, MessageType.group);
+                      widget.chat.forEach((element) async{
+                        await DBApi.forwardMessage(element, provider.userData!.subGroup4Code, MessageType.group);
+                      });
+                      chat.clearSelectedList();
                       chat.setOptions(false);
                       Navigator.pop(context);
 
@@ -207,7 +213,10 @@ class _ForwardMessageState extends State<ForwardMessage> {
                                     querySnapshot.docs.forEach((doc) async{
                                       if(checkIfChatExists(doc.reference.id,FirebaseAuth.instance.currentUser!.uid,model.userId)){
                                         exists=true;
-                                        await DBApi.forwardMessage(widget.chat,doc.reference.id, MessageType.individual);
+                                        widget.chat.forEach((element) async{
+                                          await DBApi.forwardMessage(element,doc.reference.id, MessageType.individual);
+                                        });
+                                        chat.clearSelectedList();
                                         chat.setOptions(false);
                                         Navigator.pop(context);
                                       }
@@ -219,8 +228,12 @@ class _ForwardMessageState extends State<ForwardMessage> {
                                       "user2":model.userId,
                                       "timestamp":DateTime.now().millisecondsSinceEpoch,
                                     });
-                                    await DBApi.forwardMessage(widget.chat,"${FirebaseAuth.instance.currentUser!.uid}.${model.userId}", MessageType.individual);
+                                    widget.chat.forEach((element) async{
+                                      await DBApi.forwardMessage(element,"${FirebaseAuth.instance.currentUser!.uid}.${model.userId}", MessageType.individual);
+
+                                    });
                                     chat.setOptions(false);
+                                    chat.clearSelectedList();
                                     Navigator.pop(context);
 
                                   }

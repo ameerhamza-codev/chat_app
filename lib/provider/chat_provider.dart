@@ -11,7 +11,10 @@ class ChatProvider extends ChangeNotifier {
   bool _reply=false;
   bool _options=false;
   SocialChatModel? _selectedModel;
+  List<SocialChatModel> _selectedList=[];
 
+
+  List<SocialChatModel> get selectedList => _selectedList;
 
   bool get showSend => _showSend;
   bool get options => _options;
@@ -36,6 +39,24 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setSelectedList(value) {
+    _selectedList = value;
+    notifyListeners();
+  }
+
+  void addSelectedList(value) {
+    _selectedList.add(value);
+    notifyListeners();
+  }
+  void removeSelectedList(value) {
+    _selectedList.remove(value);
+    notifyListeners();
+  }
+  void clearSelectedList() {
+    _selectedList.clear();
+    notifyListeners();
+  }
+
   void setOptions(bool value) {
     _options = value;
     notifyListeners();
@@ -48,6 +69,7 @@ class ChatProvider extends ChangeNotifier {
     setOptions(false);
     setReply(false);
     setSelectedModel(null);
+    selectedList.clear();
     notifyListeners();
   }
   bool isRecordReady=false;

@@ -41,10 +41,6 @@ class _IndividualChatState extends State<ChatScreen> {
 
 
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
 
 
@@ -55,7 +51,7 @@ class _IndividualChatState extends State<ChatScreen> {
     return File(image!.path);
   }
 
-  
+
   _scroll(){
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
@@ -73,7 +69,14 @@ class _IndividualChatState extends State<ChatScreen> {
       }
     },
   );
-
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      final provider = Provider.of<ChatProvider>(context, listen: false);
+      provider.chatReset();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,25 +203,30 @@ class _IndividualChatState extends State<ChatScreen> {
                             return Consumer<ChatProvider>(
                               builder: (context,chat,child){
                                 return GestureDetector(
-                                  onPanUpdate: (details) {
-                                    // Swiping in right direction.
-                                    if (details.delta.dx < 0) {
+
+                                  onLongPress: (){
+                                    chat.setOptions(true);
+
+                                    if(chat.selectedList.contains(model)){
+                                      chat.removeSelectedList(model);
+                                      chat.setSelectedModel(null);
+                                    }
+                                    else{
                                       chat.setSelectedModel(model);
-                                      chat.setReply(true);
+                                      chat.addSelectedList(model);
                                     }
 
 
-                                  },
-                                  onLongPress: (){
-                                    chat.setOptions(true);
-                                    chat.setSelectedModel(model);
+                                    chat.selectedList.forEach((element) {
+                                      print('selected list ${element.id}');
+                                    });
                                     print("${chat.selectedModel==null?"null id":"this is the id"}");
                                   },
                                   child: model.isReply?buildReplyItem(context, model,chat.selectedModel==null?"":chat.selectedModel.id):
                                   model.message=="uploading"?
                                   ChatWidget.loader(context, model.senderId==FirebaseAuth.instance.currentUser!.uid?true:false, model.senderId)
                                       :
-                                  buildListItemView(context,model,chat.selectedModel==null?"":chat.selectedModel.id),
+                                  buildListItemView(context,model)
                                 );
                               },
                             );
@@ -227,7 +235,9 @@ class _IndividualChatState extends State<ChatScreen> {
                       },
                     ),
                   ),
-                  Consumer<ChatProvider>(
+
+                 /* if(!provider.userData!.isAdmin && widget.messageType==MessageType.group)
+                    Consumer<ChatProvider>(
                     builder: (context,chat,child){
                       if(!chat.options)
                         return Container(
@@ -480,7 +490,272 @@ class _IndividualChatState extends State<ChatScreen> {
                           ),
                         );
                     },
-                  ),
+                  )
+                  else*/
+                    Consumer<ChatProvider>(
+                      builder: (context,chat,child){
+                        if(!chat.options)
+                          return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                children: [
+                                  if(chat.reply)
+                                    Container(
+                                      color: Colors.grey[100],
+                                      padding: EdgeInsets.fromLTRB(10,5,10,5),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(7)
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  if(chat.selectedModel.mediaType=="Text")
+                                                    Expanded(
+                                                      child: Text(chat.selectedModel.message,maxLines: 1,),
+                                                    )
+                                                  else if(chat.selectedModel.mediaType=="Audio")
+                                                    Expanded(
+                                                      child: Text("Voice Message",maxLines: 1,),
+                                                    )
+                                                  else if(chat.selectedModel.mediaType=="Image")
+                                                      Expanded(
+                                                          child: Row(
+                                                            children: [
+                                                              Image.network(chat.selectedModel.message,height: 24,width: 24,fit: BoxFit.cover,),
+                                                              SizedBox(width: 10,),
+                                                              Text("Image",maxLines: 1,),
+                                                            ],
+                                                          )
+                                                      ),
+                                                  InkWell(
+                                                    onTap: (){
+                                                      chat.setReply(false);
+                                                    },
+                                                    child:  Icon(Icons.close,size: 15,),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        if(chat.recorder.isRecording)
+                                          InkWell(
+                                            onTap: ()async{
+                                              if(chat.recorder.isRecording){
+                                                await chat.stop();
+                                              }
+                                            },
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.red,
+                                              child: Icon(Icons.delete,color: Colors.white,),
+                                            ),
+                                          )
+                                        else
+                                          InkWell(
+                                            onTap: ()async{
+                                              File imageFile=await _chooseCamera();
+
+                                              await DBApi.storeChat(
+                                                "uploading",
+                                                widget.chatheadId,
+                                                MediaType.image,
+                                                chat.reply,
+                                                chat.selectedModel==null?"":chat.selectedModel.id,
+                                                "all",
+                                                DefaultTabController.of(context)!.index==0?MessageType.social:MessageType.individual,
+                                                false,
+                                                false,
+                                              ).then((value){
+                                                chat.setReply(false);
+                                                ImageApi.uploadFileToFirebase(context, imageFile,value);
+                                              });
+                                            },
+                                            child:  CircleAvatar(
+                                              backgroundColor: primaryColor,
+                                              child: Icon(Icons.camera_alt,color: Colors.white,),
+                                            ),
+                                          ),
+                                        if(chat.recorder.isRecording)
+                                          Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 8.0),
+                                                child: StreamBuilder<RecordingDisposition>(
+                                                  stream: chat.recorder.onProgress,
+                                                  builder: (context,AsyncSnapshot<RecordingDisposition> snapshot){
+                                                    final duration=snapshot.hasData?snapshot.data!.duration:Duration.zero;
+                                                    if(snapshot.hasError){
+                                                      return Text("error ${snapshot.error.toString()}");
+                                                    }
+                                                    return Text(prettyDuration(duration));
+                                                  },
+                                                ),
+                                              )
+                                          )
+                                        else
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: TextField(
+                                                controller: inputController,
+                                                maxLines: null,
+                                                minLines: 1,
+                                                keyboardType: TextInputType.multiline,
+                                                textInputAction: TextInputAction.newline,
+                                                decoration:const InputDecoration.collapsed(
+                                                    hintText: 'Message'
+                                                ),
+                                                onChanged: (value){
+                                                  if(value.isEmpty){
+                                                    chat.setShowSend(false);
+                                                  }
+                                                  else{
+                                                    chat.setShowSend(true);
+                                                  }
+
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        if(chat.showSend)
+                                          IconButton(
+                                              icon: Icon( Icons.send, color: Colors.blue),
+
+                                              onPressed: () async{
+                                                sendMessage(widget.chatheadId,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id);
+                                              }
+                                          )
+                                        else
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              if(!chat.recorder.isRecording)
+                                                InkWell(
+                                                  onTap: ()async{
+                                                    bottomSheet(context);
+
+
+                                                  },
+                                                  child: Icon(Icons.attach_file, color: textColor.shade200),
+                                                ),
+                                              IconButton(
+                                                  icon: Icon(chat.recorder.isRecording?Icons.stop:Icons.mic, color: chat.recorder.isRecording?Colors.redAccent:Colors.blue),
+
+                                                  onPressed: () async{
+                                                    if(chat.recorder.isRecording){
+                                                      File audioFile=await chat.stop();
+                                                      chat.setReply(false);
+                                                      await DBApi.storeChat(
+                                                          "uploading",
+                                                          widget.chatheadId,
+                                                          MediaType.audio,
+                                                          chat.reply,
+                                                          chat.selectedModel==null?"":chat.selectedModel.id,
+                                                          "all",
+                                                          widget.messageType,
+                                                          false,
+                                                          false
+                                                      ).then((value){
+                                                        ImageApi.uploadFileToFirebase(context, audioFile,value);
+                                                      });
+                                                      //uploadFileToFirebase(context, audioFile, widget.chatheadId,MediaType.audio,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id);
+                                                    }
+                                                    else{
+                                                      await chat.record();
+                                                    }
+
+                                                  }
+                                              ),
+                                            ],
+                                          ),
+
+
+
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                          );
+                        else
+                          return Container(
+                            // margin: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              //borderRadius: BorderRadius.circular(50)
+                            ),
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                IconButton(
+                                  onPressed: (){
+                                    chat.setOptions(false);
+                                  },
+                                  icon: Icon(Icons.arrow_back),
+                                ),
+                                Row(
+                                  children: [
+                                    if(chat.selectedList.length==1)
+                                    IconButton(
+                                      onPressed: (){
+
+                                        chat.setReply(true);
+                                        chat.setOptions(false);
+
+
+                                      },
+                                      icon: Icon(Icons.reply),
+                                    ),
+                                    if(chat.selectedModel!.senderId==FirebaseAuth.instance.currentUser!.uid)
+                                      IconButton(
+                                        onPressed: ()async{
+
+                                          chat.selectedList.forEach((element) async{
+                                            await FirebaseFirestore.instance.collection('social_chat').doc(element.id).delete().then((value){
+
+                                              chat.removeSelectedList(element);
+                                          });
+                                            chat.setOptions(false);
+
+
+                                          });
+                                        },
+                                        icon: Icon(Icons.delete),
+                                      ),
+                                    if(widget.messageType!=MessageType.social)
+                                      IconButton(
+                                        onPressed: ()async{
+
+                                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ForwardMessage(chat.selectedList)));
+
+                                        },
+                                        icon: Icon(Icons.forward),
+                                      ),
+                                  ],
+                                )
+
+                              ],
+                            ),
+                          );
+                      },
+                    ),
+
 
                 ],
               ),
@@ -537,10 +812,19 @@ class _IndividualChatState extends State<ChatScreen> {
 
 
 
-  Widget buildListItemView(BuildContext context,SocialChatModel item,selectedId){
+  Widget buildListItemView(BuildContext context,SocialChatModel item){
     bool isMe = item.senderId==FirebaseAuth.instance.currentUser!.uid?true:false;
-    bool isSelected=selectedId==item.id;
+    bool isSelected=false;
+    //(chat.selectedList.isEmpty?(chat.selectedModel==null?"":chat.selectedModel.id):chat.selectedList.contains(model)model.id):chat.selectedModel==null?"":chat.selectedModel.id
+    final provider = Provider.of<ChatProvider>(context, listen: false);
 
+    if(provider.selectedList.contains(item)){
+      isSelected=true;
+    }
+    else if(provider.selectedModel!=null){
+      if(provider.selectedModel!.id==item.id)
+        isSelected=true;
+    }
     return Container(
       color: isSelected?Colors.grey[400]:Colors.grey[300],
       child: Wrap(
