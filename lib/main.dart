@@ -1,5 +1,6 @@
 import 'package:chat_app/provider/audio_provider.dart';
 import 'package:chat_app/provider/chat_provider.dart';
+import 'package:chat_app/provider/forward_provider.dart';
 import 'package:chat_app/provider/user_data_provider.dart';
 import 'package:chat_app/screens/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<AudioProvider>(
           create: (_) => AudioProvider(),
+        ),
+        ChangeNotifierProvider<ForwardProvider>(
+          create: (_) => ForwardProvider(),
         ),
       ],
       child:  MaterialApp(

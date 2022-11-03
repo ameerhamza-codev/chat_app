@@ -233,6 +233,7 @@ class _GroupChatState extends State<Groups> {
               },
             ),
           ),
+          //non admin user can send message
           Container(
             margin: EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
@@ -278,6 +279,7 @@ class _GroupChatState extends State<Groups> {
               },
             ),
           ),
+          //non admin user can send message
           Container(
             margin: EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
@@ -323,6 +325,7 @@ class _GroupChatState extends State<Groups> {
               },
             ),
           ),
+          //non admin user can send message
           Container(
             margin: EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
@@ -368,6 +371,7 @@ class _GroupChatState extends State<Groups> {
               },
             ),
           ),
+          //non admin user can send message
           Container(
             margin: EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(

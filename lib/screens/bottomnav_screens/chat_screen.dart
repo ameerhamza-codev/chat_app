@@ -210,7 +210,11 @@ class _IndividualChatState extends State<ChatScreen> {
 
                                     if(chat.selectedList.contains(model)){
                                       chat.removeSelectedList(model);
-                                      chat.setSelectedModel(null);
+                                      if(chat.selectedList.isNotEmpty){
+                                        chat.setSelectedModel(chat.selectedList.last);
+                                      }
+                                      else
+                                        chat.setSelectedModel(null);
                                     }
                                     else{
                                       chat.setSelectedModel(model);
@@ -542,6 +546,8 @@ class _IndividualChatState extends State<ChatScreen> {
                                                   InkWell(
                                                     onTap: (){
                                                       chat.setReply(false);
+                                                      chat.setSelectedModel(null);
+                                                      chat.clearSelectedList();
                                                     },
                                                     child:  Icon(Icons.close,size: 15,),
                                                   )
@@ -708,6 +714,8 @@ class _IndividualChatState extends State<ChatScreen> {
                                 IconButton(
                                   onPressed: (){
                                     chat.setOptions(false);
+                                    chat.setSelectedModel(null);
+                                    chat.clearSelectedList();
                                   },
                                   icon: Icon(Icons.arrow_back),
                                 ),
@@ -724,7 +732,7 @@ class _IndividualChatState extends State<ChatScreen> {
                                       },
                                       icon: Icon(Icons.reply),
                                     ),
-                                    if(chat.selectedModel!.senderId==FirebaseAuth.instance.currentUser!.uid)
+                                    if(chat.selectedModel!=null&&chat.selectedModel!.senderId==FirebaseAuth.instance.currentUser!.uid)
                                       IconButton(
                                         onPressed: ()async{
 
@@ -769,6 +777,9 @@ class _IndividualChatState extends State<ChatScreen> {
   }
 
   void sendMessage(groupId,bool reply,replyId)async{
+
+    final provider = Provider.of<ChatProvider>(context, listen: false);
+    provider.setReply(false);
     String message = inputController.text;
     inputController.clear();
     await DBApi.storeChat(
