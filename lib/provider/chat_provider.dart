@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chat_app/model/social_chat_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,6 +38,16 @@ class ChatProvider extends ChangeNotifier {
   void setSelectedModel(value) {
     _selectedModel = value;
     notifyListeners();
+  }
+
+  bool showDelete() {
+    bool _showDelete=true;
+    _selectedList.forEach((element) {
+      if(element.senderId!=FirebaseAuth.instance.currentUser!.uid){
+        _showDelete=false;
+      }
+    });
+    return _showDelete;
   }
 
   void setSelectedList(value) {

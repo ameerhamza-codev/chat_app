@@ -732,7 +732,7 @@ class _IndividualChatState extends State<ChatScreen> {
                                       },
                                       icon: Icon(Icons.reply),
                                     ),
-                                    if(chat.selectedModel!=null&&chat.selectedModel!.senderId==FirebaseAuth.instance.currentUser!.uid)
+                                    if(chat.showDelete())
                                       IconButton(
                                         onPressed: ()async{
 
@@ -919,19 +919,13 @@ class _IndividualChatState extends State<ChatScreen> {
                 future: DBApi.getUserData(item.senderId),
                 builder: (context, AsyncSnapshot<AppUser> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircleAvatar(
-                      backgroundColor: primaryColor,
-                      maxRadius: 20,
-                      minRadius: 20,
-                    );
+                    return CupertinoActivityIndicator();
                   }
                   else {
                     if (snapshot.hasError) {
                       print("error ${snapshot.error}");
-                      return CircleAvatar(
-                        backgroundColor: primaryColor,
-                        maxRadius: 20,
-                        minRadius: 20,
+                      return Center(
+                        child: Text("This message was deleted"),
                       );
                     }
 
@@ -972,10 +966,9 @@ class _IndividualChatState extends State<ChatScreen> {
                             else {
                               if (snapshot.hasError) {
                                 print("error ${snapshot.error}");
-                                return CircleAvatar(
-                                  backgroundColor: primaryColor,
-                                  maxRadius: 20,
-                                  minRadius: 20,
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text("This message was deleted"),
                                 );
                               }
 
