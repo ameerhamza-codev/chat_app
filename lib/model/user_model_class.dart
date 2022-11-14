@@ -9,7 +9,21 @@ class AppUser{
   int? createdAt;
   bool? action, group, refer, subGroup1Representative, subGroup2Representative, subGroup3Representative, subGroup4Representative;
   bool expatriates,associatidWithAddRes;
-  bool isAdmin;
+  bool country_main;
+  bool country_sub1;
+  bool country_sub2;
+  bool country_sub3;
+  bool country_sub4;
+  bool country_occupation;
+  bool country_restype;
+  bool city_main;
+  bool city_sub1;
+  bool city_sub2;
+  bool city_sub3;
+  bool city_sub4;
+  bool city_occupation;
+  bool city_restype;
+
 
 
 
@@ -53,7 +67,20 @@ class AppUser{
         subGroup2Representative=map['subGroup2Representative']??false,
         subGroup3Representative=map['subGroup3Representative']??false,
         expatriates=map['expatriates']??true,
-        isAdmin=map['isAdmin']??false,
+        country_main = map['country_main']??true,
+        country_sub1 = map['country_sub1']??true,
+        country_sub2 = map['country_sub2']??true,
+        country_sub3 = map['country_sub3']??true,
+        country_sub4 = map['country_sub4']??true,
+        country_occupation = map['country_occupation']??true,
+        country_restype = map['country_restype']??true,
+        city_main = map['city_main']??true,
+        city_sub1 = map['city_sub1']??true,
+        city_sub2 = map['city_sub2']??true,
+        city_sub3 = map['city_sub3']??true,
+        city_sub4 = map['city_sub4']??true,
+        city_occupation = map['city_occupation']??true,
+        city_restype = map['city_restype']??true,
         associatidWithAddRes=map['associatidWithAddRes']??true,
         subGroup4Representative=map['subGroup4Representative']??false;
 

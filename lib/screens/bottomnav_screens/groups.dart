@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../model/user_model_class.dart';
 import '../../provider/user_data_provider.dart';
 import '../../utils/constants.dart';
+import '../../widgets/group_tile.dart';
 
 class Groups extends StatefulWidget {
   const Groups({Key? key}) : super(key: key);
@@ -75,325 +76,101 @@ class _GroupChatState extends State<Groups> {
             ),
           ),
           //14 groups
+          GroupTile(
+            title: provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", ""),
+            reciverId: provider.userData!.subGroup3Code!,
+          ),
+          //if(provider.userData!.isAdmin)
+          GroupTile(
+            title: provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", ""),
+            reciverId: provider.userData!.subGroup4Code!,
+          ),
+
+          //14 groups
           //mainGroup
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
+          if(provider.userData!.country_main)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}',
+              reciverId: "${provider.userData!.country}${provider.userData!.mainGroupCode}",
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.country} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.country}${provider.userData!.mainGroupCode}")));
-              },
+          if(provider.userData!.city_main)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.mainGroupCode}",
             ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
-            ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.location} - ${provider.userData!.mainGroup!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.location}${provider.userData!.mainGroupCode}")));
-              },
-            ),
-          ),
+
           //subgroup1
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
+          if(provider.userData!.country_sub1)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}',
+              reciverId: "${provider.userData!.country}${provider.userData!.subGroup1Code}",
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.country} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.country}${provider.userData!.subGroup1Code}")));
-              },
+          if(provider.userData!.city_sub1)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup1Code}",
             ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
-            ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.location} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.location}${provider.userData!.subGroup1Code}")));
-              },
-            ),
-          ),
+
           //subgroup2
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
+          if(provider.userData!.country_sub2)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}',
+              reciverId: "${provider.userData!.country}${provider.userData!.subGroup2Code}",
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.country} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.country}${provider.userData!.subGroup2Code}")));
-              },
+          if(provider.userData!.city_sub2)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup2Code}",
             ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
-            ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.location} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.location}${provider.userData!.subGroup2Code}")));
-              },
-            ),
-          ),
+
           //subgroup3
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
+          if(provider.userData!.country_sub3)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}',
+              reciverId: "${provider.userData!.country}${provider.userData!.subGroup3Code}",
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.country} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.country}${provider.userData!.subGroup3Code}")));
-              },
+          if(provider.userData!.city_sub3)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup3Code}",
             ),
-          ),
-          //non admin user can send message
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
-            ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.location} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.location}${provider.userData!.subGroup3Code}")));
-              },
-            ),
-          ),
+
+
           //subgroup4
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
+          if(provider.userData!.country_sub4)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}',
+              reciverId: "${provider.userData!.country}${provider.userData!.subGroup4Code}",
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.country} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.country}${provider.userData!.subGroup4Code}")));
-              },
+          if(provider.userData!.city_sub4)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup4Code}",
             ),
-          ),
-          //non admin user can send message
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
-            ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.location} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.location}${provider.userData!.subGroup4Code}")));
-              },
-            ),
-          ),
+
+
           //occupation
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
+          if(provider.userData!.country_occupation)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.occupation!}',
+              reciverId: "${provider.userData!.country}${provider.userData!.occupation}",
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.country} - ${provider.userData!.occupation!}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.country}${provider.userData!.occupation}")));
-              },
+          if(provider.userData!.city_occupation)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.occupation!}',
+              reciverId: "${provider.userData!.location}${provider.userData!.occupation}",
             ),
-          ),
-          //non admin user can send message
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
+
+          if(provider.userData!.country_restype)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.additionalResponsibility!}',
+              reciverId: "${provider.userData!.country}${provider.userData!.additionalResponsibility}",
             ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.location} - ${provider.userData!.occupation!}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.location}${provider.userData!.occupation}")));
-              },
+          if(provider.userData!.city_restype)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.additionalResponsibility!}',
+              reciverId: "${provider.userData!.location}${provider.userData!.additionalResponsibility}",
             ),
-          ),
-          //addition responsibility
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
-            ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.country} - ${provider.userData!.additionalResponsibility!}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.country}${provider.userData!.additionalResponsibility}")));
-              },
-            ),
-          ),
-          //non admin user can send message
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide( color: textColor.shade100),
-              ),
-            ),
-            child: ListTile(
-              leading: const CircleAvatar(
-                backgroundColor: textColor,
-                minRadius: 20.0,
-                maxRadius: 20.0,
-                backgroundImage: AssetImage('assets/images/group_img.png'),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 15),
-              title:Text('${provider.userData!.location} - ${provider.userData!.additionalResponsibility!}'),
-              //title: Text(provider.userData!.subGroup4!),
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, "${provider.userData!.location}${provider.userData!.additionalResponsibility}")));
-              },
-            ),
-          ),
 
 
         ],

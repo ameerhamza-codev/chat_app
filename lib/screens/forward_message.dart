@@ -1,7 +1,7 @@
 import 'package:chat_app/model/social_chat_model.dart';
 import 'package:chat_app/provider/chat_provider.dart';
 import 'package:chat_app/provider/forward_provider.dart';
-import 'package:chat_app/widgets/group_tile.dart';
+import 'package:chat_app/widgets/forward_group_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -141,95 +141,99 @@ class _ForwardMessageState extends State<ForwardMessage> {
 
 
 
-                    if(provider.userData!.isAdmin)
-                    GroupTile(
+                    //if(provider.userData!.isAdmin)
+                    ForwardGroupTile(
                       title: provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", ""),
                       reciverId: provider.userData!.subGroup3Code!,
                     ),
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    //if(provider.userData!.isAdmin)
+                      ForwardGroupTile(
                         title: provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", ""),
                         reciverId: provider.userData!.subGroup4Code!,
                       ),
 
                     //14 groups
                     //mainGroup
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.country_main)
+                      ForwardGroupTile(
                         title: '${provider.userData!.country} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}',
                         reciverId: "${provider.userData!.country}${provider.userData!.mainGroupCode}",
                       ),
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.city_main)
+                      ForwardGroupTile(
                         title: '${provider.userData!.location} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}',
                         reciverId: "${provider.userData!.location}${provider.userData!.mainGroupCode}",
                       ),
 
                     //subgroup1
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.country_sub1)
+                      ForwardGroupTile(
                         title: '${provider.userData!.country} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}',
                         reciverId: "${provider.userData!.country}${provider.userData!.subGroup1Code}",
                       ),
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.city_sub1)
+                      ForwardGroupTile(
                         title: '${provider.userData!.location} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}',
                         reciverId: "${provider.userData!.location}${provider.userData!.subGroup1Code}",
                       ),
 
                     //subgroup2
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.country_sub2)
+                      ForwardGroupTile(
                         title: '${provider.userData!.country} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}',
                         reciverId: "${provider.userData!.country}${provider.userData!.subGroup2Code}",
                       ),
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.city_sub2)
+                      ForwardGroupTile(
                         title: '${provider.userData!.location} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}',
                         reciverId: "${provider.userData!.location}${provider.userData!.subGroup2Code}",
                       ),
 
                     //subgroup3
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.country_sub3)
+                      ForwardGroupTile(
                         title: '${provider.userData!.country} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}',
                         reciverId: "${provider.userData!.country}${provider.userData!.subGroup3Code}",
                       ),
-                    GroupTile(
+                    if(provider.userData!.city_sub3)
+                    ForwardGroupTile(
                       title: '${provider.userData!.location} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}',
                       reciverId: "${provider.userData!.location}${provider.userData!.subGroup3Code}",
                     ),
 
 
                     //subgroup4
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.country_sub4)
+                      ForwardGroupTile(
                         title: '${provider.userData!.country} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}',
                         reciverId: "${provider.userData!.country}${provider.userData!.subGroup4Code}",
                       ),
-                    GroupTile(
+                    if(provider.userData!.city_sub4)
+                    ForwardGroupTile(
                       title: '${provider.userData!.location} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}',
                       reciverId: "${provider.userData!.location}${provider.userData!.subGroup4Code}",
                     ),
 
 
                     //occupation
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.country_occupation)
+                      ForwardGroupTile(
                         title: '${provider.userData!.country} - ${provider.userData!.occupation!}',
                         reciverId: "${provider.userData!.country}${provider.userData!.occupation}",
                       ),
-                    GroupTile(
+                    if(provider.userData!.city_occupation)
+                    ForwardGroupTile(
                       title: '${provider.userData!.location} - ${provider.userData!.occupation!}',
                       reciverId: "${provider.userData!.location}${provider.userData!.occupation}",
                     ),
 
-                    if(provider.userData!.isAdmin)
-                      GroupTile(
+                    if(provider.userData!.country_restype)
+                      ForwardGroupTile(
                         title: '${provider.userData!.country} - ${provider.userData!.additionalResponsibility!}',
                         reciverId: "${provider.userData!.country}${provider.userData!.additionalResponsibility}",
                       ),
-                    GroupTile(
+                    if(provider.userData!.city_restype)
+                    ForwardGroupTile(
                       title: '${provider.userData!.location} - ${provider.userData!.additionalResponsibility!}',
                       reciverId: "${provider.userData!.location}${provider.userData!.additionalResponsibility}",
                     ),
