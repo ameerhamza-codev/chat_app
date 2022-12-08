@@ -59,6 +59,7 @@ dependencies:
   flutter_filereader: ^3.0.0
   flutter_typeahead: ^4.1.1
   advance_pdf_viewer: ^2.0.1
+  paginate_firestore: ^1.0.3+1
 
 dev_dependencies:
   flutter_test:

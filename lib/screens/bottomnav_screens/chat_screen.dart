@@ -19,6 +19,8 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:paginate_firestore/bloc/pagination_listeners.dart';
+import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart';
 import '../../provider/user_data_provider.dart';
@@ -54,7 +56,13 @@ class _IndividualChatState extends State<ChatScreen> {
 
 
   _scroll(){
-    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    print('scroll before');
+    Timer(Duration(seconds: 3), () {
+      print('scroll after');
+      //_scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      print("This line is execute after 5 seconds");
+    });
+
   }
 
   late final _focusNode = FocusNode(
@@ -78,6 +86,7 @@ class _IndividualChatState extends State<ChatScreen> {
       provider.chatReset();
     });
   }
+  PaginateRefreshedChangeListener refreshChangeListener = PaginateRefreshedChangeListener();
 
   @override
   Widget build(BuildContext context) {
@@ -163,47 +172,42 @@ class _IndividualChatState extends State<ChatScreen> {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Expanded(
-                    child:  StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance.collection('social_chat')
-                          .where("groupId",isEqualTo: widget.chatheadId)
-                          .orderBy('dateTime',descending: false).snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        //WidgetsBinding.instance.addPostFrameCallback((_) =>  controller.jumpTo(controller.position.maxScrollExtent));
-                        if (snapshot.hasError) {
-                          print(snapshot.error.toString());
-                          return Text('Something went wrong');
-                        }
+                    child:RefreshIndicator(
+                      onRefresh: () async {
+                        refreshChangeListener.refreshed = true;
+                      },
 
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                      child: PaginateFirestore(
+                        reverse: true,
+                        isLive: true,
+                        padding: EdgeInsets.only(left: 8, top: 8, right: 8, bottom: 0),
+                        physics: BouncingScrollPhysics(),
+                        query: FirebaseFirestore.instance.collection('social_chat')
+                            .where("groupId",isEqualTo: widget.chatheadId)
+                            .orderBy('dateTime',descending: true),
+                        listeners: [
+                          refreshChangeListener,
+                        ],
+                        initialLoader: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        itemsPerPage: 50,
+                        onEmpty:Center(
+                          child: Text("No Messages"),
+                        ),
+                        shrinkWrap: true,
+                        onError: (e) {
                           return Center(
-                            child: CircularProgressIndicator(),
+                            child: Text("Something went wrong"),
                           );
-                        }
-                        if(snapshot.hasData){
-                          WidgetsBinding.instance.addPostFrameCallback((_){
-                            _scroll();
-                          });
-                        }
-
-
-                        if (snapshot.data!.size==0) {
-                          return Center(
-                            child: Text("No Messages"),
-                          );
-                        }
-
-                        return ListView(
-                          key: Globals.audioListKey,
-                          padding: EdgeInsets.only(top: 10),
-                          controller: _scrollController,
-                          shrinkWrap: true,
-                          children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-                            SocialChatModel model=SocialChatModel.fromMap(data,document.reference.id);
-
-                            return Consumer<ChatProvider>(
-                              builder: (context,chat,child){
-                                return GestureDetector(
+                        },
+                        itemBuilderType: PaginateBuilderType.listView,
+                        itemBuilder: (context, snap, index) {
+                          Map<String, dynamic> data = snap[index].data()! as Map<String, dynamic>;
+                          SocialChatModel model=SocialChatModel.fromMap(data,snap[index].reference.id);
+                          return Consumer<ChatProvider>(
+                            builder: (context,chat,child){
+                              return GestureDetector(
 
                                   onLongPress: (){
                                     chat.setOptions(true);
@@ -232,272 +236,13 @@ class _IndividualChatState extends State<ChatScreen> {
                                   ChatWidget.loader(context, model.senderId==FirebaseAuth.instance.currentUser!.uid?true:false, model.senderId)
                                       :
                                   buildListItemView(context,model)
-                                );
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
-
-                 /* if(!provider.userData!.isAdmin && widget.messageType==MessageType.group)
-                    Consumer<ChatProvider>(
-                    builder: (context,chat,child){
-                      if(!chat.options)
-                        return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                            ),
-                            alignment: Alignment.centerLeft,
-                            child: Column(
-                              children: [
-                                if(chat.reply)
-                                  Container(
-                                    color: Colors.grey[100],
-                                    padding: EdgeInsets.fromLTRB(10,5,10,5),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(7)
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                if(chat.selectedModel.mediaType=="Text")
-                                                  Expanded(
-                                                    child: Text(chat.selectedModel.message,maxLines: 1,),
-                                                  )
-                                                else if(chat.selectedModel.mediaType=="Audio")
-                                                  Expanded(
-                                                    child: Text("Voice Message",maxLines: 1,),
-                                                  )
-                                                else if(chat.selectedModel.mediaType=="Image")
-                                                    Expanded(
-                                                        child: Row(
-                                                          children: [
-                                                            Image.network(chat.selectedModel.message,height: 24,width: 24,fit: BoxFit.cover,),
-                                                            SizedBox(width: 10,),
-                                                            Text("Image",maxLines: 1,),
-                                                          ],
-                                                        )
-                                                    ),
-                                                InkWell(
-                                                  onTap: (){
-                                                    chat.setReply(false);
-                                                  },
-                                                  child:  Icon(Icons.close,size: 15,),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                Container(
-                                  child: Row(
-                                    children: <Widget>[
-                                      if(chat.recorder.isRecording)
-                                        InkWell(
-                                          onTap: ()async{
-                                            if(chat.recorder.isRecording){
-                                              await chat.stop();
-                                            }
-                                          },
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.red,
-                                            child: Icon(Icons.delete,color: Colors.white,),
-                                          ),
-                                        )
-                                      else
-                                        InkWell(
-                                          onTap: ()async{
-                                            File imageFile=await _chooseCamera();
-
-                                            await DBApi.storeChat(
-                                              "uploading",
-                                              widget.chatheadId,
-                                              MediaType.image,
-                                              chat.reply,
-                                              chat.selectedModel==null?"":chat.selectedModel.id,
-                                              "all",
-                                              DefaultTabController.of(context)!.index==0?MessageType.social:MessageType.individual,
-                                              false,
-                                              false,
-                                            ).then((value){
-                                              chat.setReply(false);
-                                              ImageApi.uploadFileToFirebase(context, imageFile,value);
-                                            });
-                                          },
-                                          child:  CircleAvatar(
-                                            backgroundColor: primaryColor,
-                                            child: Icon(Icons.camera_alt,color: Colors.white,),
-                                          ),
-                                        ),
-                                      if(chat.recorder.isRecording)
-                                        Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 8.0),
-                                              child: StreamBuilder<RecordingDisposition>(
-                                                stream: chat.recorder.onProgress,
-                                                builder: (context,AsyncSnapshot<RecordingDisposition> snapshot){
-                                                  final duration=snapshot.hasData?snapshot.data!.duration:Duration.zero;
-                                                  if(snapshot.hasError){
-                                                    return Text("error ${snapshot.error.toString()}");
-                                                  }
-                                                  return Text(prettyDuration(duration));
-                                                },
-                                              ),
-                                            )
-                                        )
-                                      else
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(left: 8.0),
-                                            child: TextField(
-                                              controller: inputController,
-                                              maxLines: null,
-                                              minLines: 1,
-                                              keyboardType: TextInputType.multiline,
-                                              textInputAction: TextInputAction.newline,
-                                              decoration:const InputDecoration.collapsed(
-                                                  hintText: 'Message'
-                                              ),
-                                              onChanged: (value){
-                                                if(value.isEmpty){
-                                                  chat.setShowSend(false);
-                                                }
-                                                else{
-                                                  chat.setShowSend(true);
-                                                }
-
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      if(chat.showSend)
-                                        IconButton(
-                                            icon: Icon( Icons.send, color: Colors.blue),
-
-                                            onPressed: () async{
-                                              sendMessage(widget.chatheadId,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id);
-                                              chat.setShowSend(false);
-                                            }
-                                        )
-                                      else
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            if(!chat.recorder.isRecording)
-                                              InkWell(
-                                                onTap: ()async{
-                                                  bottomSheet(context);
-
-
-                                                },
-                                                child: Icon(Icons.attach_file, color: textColor.shade200),
-                                              ),
-                                            InkWell(
-                                                child: Icon(chat.recorder.isRecording?Icons.stop:Icons.mic, color: chat.recorder.isRecording?Colors.redAccent:Colors.blue),
-
-                                                onTap: () async{
-                                                  if(chat.recorder.isRecording){
-                                                    File audioFile=await chat.stop();
-                                                    chat.setReply(false);
-                                                    await DBApi.storeChat(
-                                                        "uploading",
-                                                        widget.chatheadId,
-                                                        MediaType.audio,
-                                                        chat.reply,
-                                                        chat.selectedModel==null?"":chat.selectedModel.id,
-                                                        "all",
-                                                        widget.messageType,
-                                                        false,
-                                                        false
-                                                    ).then((value){
-                                                      ImageApi.uploadFileToFirebase(context, audioFile,value);
-                                                    });
-                                                    //uploadFileToFirebase(context, audioFile, widget.chatheadId,MediaType.audio,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id);
-                                                  }
-                                                  else{
-                                                    await chat.record();
-                                                  }
-
-                                                }
-                                            ),
-                                          ],
-                                        ),
-
-
-
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                        );
-                      else
-                        return Container(
-                          // margin: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            //borderRadius: BorderRadius.circular(50)
-                          ),
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              IconButton(
-                                onPressed: (){
-                                  chat.setOptions(false);
-                                },
-                                icon: Icon(Icons.arrow_back),
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: (){
-
-                                      chat.setReply(true);
-                                      chat.setOptions(false);
-                                    },
-                                    icon: Icon(FontAwesomeIcons.reply),
-                                  ),
-                                  if(chat.selectedModel.senderId==FirebaseAuth.instance.currentUser!.uid)
-                                    IconButton(
-                                      onPressed: ()async{
-                                        await FirebaseFirestore.instance.collection('social_chat').doc(chat.selectedModel.id).delete().then((value){
-                                          chat.setOptions(false);
-
-
-                                        });
-                                      },
-                                      icon: Icon(Icons.delete),
-                                    ),
-                                  if(widget.messageType!=MessageType.social)
-                                    IconButton(
-                                      onPressed: ()async{
-                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ForwardMessage(chat.selectedModel)));
-
-                                      },
-                                      icon: Icon(FontAwesomeIcons.share),
-                                    ),
-                                ],
-                              )
-
-                            ],
-                          ),
-                        );
-                    },
-                  )
-                  else*/
                     Consumer<ChatProvider>(
                       builder: (context,chat,child){
                         if(!chat.options)
@@ -580,11 +325,15 @@ class _IndividualChatState extends State<ChatScreen> {
                                               File imageFile=await _chooseCamera();
 
                                               await DBApi.storeChat(
+                                                context,
                                                 "uploading",
                                                 widget.chatheadId,
                                                 MediaType.image,
                                                 chat.reply,
                                                 chat.selectedModel==null?"":chat.selectedModel.id,
+                                                chat.selectedModel==null?"":chat.selectedModel.message,
+                                                chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                                                chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
                                                 "all",
                                                 DefaultTabController.of(context)!.index==0?MessageType.social:MessageType.individual,
                                                 false,
@@ -645,7 +394,12 @@ class _IndividualChatState extends State<ChatScreen> {
                                               icon: Icon( Icons.send, color: Colors.blue),
 
                                               onPressed: () async{
-                                                sendMessage(widget.chatheadId,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id);
+                                                sendMessage(widget.chatheadId,chat.reply,
+                                                    chat.selectedModel==null?"":chat.selectedModel.id,
+                                                    chat.selectedModel==null?"":chat.selectedModel.message,
+                                                    chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                                                  chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
+                                                );
                                               }
                                           )
                                         else
@@ -669,11 +423,15 @@ class _IndividualChatState extends State<ChatScreen> {
                                                       File audioFile=await chat.stop();
                                                       chat.setReply(false);
                                                       await DBApi.storeChat(
+                                                          context,
                                                           "uploading",
                                                           widget.chatheadId,
                                                           MediaType.audio,
                                                           chat.reply,
                                                           chat.selectedModel==null?"":chat.selectedModel.id,
+                                                          chat.selectedModel==null?"":chat.selectedModel.message,
+                                                          chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                                                          chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
                                                           "all",
                                                           widget.messageType,
                                                           false,
@@ -776,18 +534,25 @@ class _IndividualChatState extends State<ChatScreen> {
     );
   }
 
-  void sendMessage(groupId,bool reply,replyId)async{
+  void sendMessage(groupId,bool reply,replyId,replyMessage,
+      replyType,
+      replyDateTime)async{
 
     final provider = Provider.of<ChatProvider>(context, listen: false);
     provider.setReply(false);
     String message = inputController.text;
     inputController.clear();
+    provider.setShowSend(false);
     await DBApi.storeChat(
+      context,
         message,
         groupId,
         MediaType.plainText,
         reply,
         replyId,
+        replyMessage,
+        replyType,
+        replyDateTime,
         "all",
         widget.messageType,
         false,
@@ -795,7 +560,7 @@ class _IndividualChatState extends State<ChatScreen> {
     );
     _scroll();
   }
-  void selectMediaAndUpload(String mediaType,reply,replyId,List<String> extensions)async{
+  void selectMediaAndUpload(String mediaType,reply,replyId,replyMessage,replyType,replyDateTime,List<String> extensions)async{
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: extensions,
@@ -805,17 +570,22 @@ class _IndividualChatState extends State<ChatScreen> {
       File file = File(result.files.single.path!);
       final provider = Provider.of<UserDataProvider>(context, listen: false);
       await DBApi.storeChat(
+        context,
           "uploading",
           widget.chatheadId,
           mediaType,
           reply,
           replyId,
+          replyMessage,
+          replyType,
+          replyDateTime,
           "all",
           widget.messageType,
           false,
           false
       ).then((value){
         //chat.setReply(false);
+        print('media primary key $value');
         ImageApi.uploadFileToFirebase(context,file,value);
       });
       Navigator.pop(context);
@@ -845,38 +615,11 @@ class _IndividualChatState extends State<ChatScreen> {
         children: <Widget>[
           isMe ? Container(): Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: FutureBuilder<AppUser>(
-                future: DBApi.getUserData(item.senderId),
-                builder: (context, AsyncSnapshot<AppUser> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircleAvatar(
-                      backgroundColor: primaryColor,
-                      maxRadius: 20,
-                      minRadius: 20,
-                    );
-                  }
-                  else {
-                    if (snapshot.hasError) {
-                      print("error ${snapshot.error}");
-                      return CircleAvatar(
-                        backgroundColor: primaryColor,
-                        maxRadius: 20,
-                        minRadius: 20,
-                      );
-                    }
-
-
-                    else {
-                      return CircleAvatar(
-                        backgroundImage: NetworkImage(snapshot.data!.profilePicture!),
-                        maxRadius: 20,
-                        minRadius: 20,
-                      );
-
-                    }
-                  }
-                }
-            ),
+            child:CircleAvatar(
+              backgroundImage: NetworkImage(item.senderProfilePic),
+              maxRadius: 20,
+              minRadius: 20,
+            )
           ),
 
           if(item.mediaType=="Text")
@@ -903,11 +646,19 @@ class _IndividualChatState extends State<ChatScreen> {
 
 
 
-  Widget buildReplyItem(BuildContext context,SocialChatModel item,selectedId){
+  Widget buildReplyItem(BuildContext context,SocialChatModel item,selectedId) {
     bool isMe = item.senderId==FirebaseAuth.instance.currentUser!.uid?true:false;
     bool isSelected=selectedId==item.id;
-    print("reply selected");
-    print("media type ${item.mediaType}");
+    final provider = Provider.of<ChatProvider>(context, listen: false);
+    bool replyAvailable=false;
+    provider.replyMessages.forEach((element) {
+      if(element.id==item.replyId){
+        replyAvailable=true;
+      }
+    });
+    if(!replyAvailable){
+      DBApi.getReplyChat(item.replyId,context);
+    }
     return  Container(
       color: isSelected?Colors.grey[400]:Colors.grey[300],
       child: Wrap(
@@ -915,32 +666,11 @@ class _IndividualChatState extends State<ChatScreen> {
         children: <Widget>[
           isMe ? Container(): Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: FutureBuilder<AppUser>(
-                future: DBApi.getUserData(item.senderId),
-                builder: (context, AsyncSnapshot<AppUser> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CupertinoActivityIndicator();
-                  }
-                  else {
-                    if (snapshot.hasError) {
-                      print("error ${snapshot.error}");
-                      return Center(
-                        child: Text("This message was deleted"),
-                      );
-                    }
-
-
-                    else {
-                      return CircleAvatar(
-                        backgroundImage: NetworkImage(snapshot.data!.profilePicture!),
-                        maxRadius: 20,
-                        minRadius: 20,
-                      );
-
-                    }
-                  }
-                }
-            ),
+            child:CircleAvatar(
+              backgroundImage: NetworkImage(item.senderProfilePic),
+              maxRadius: 20,
+              minRadius: 20,
+            )
           ),
           Card(
               shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(5),),
@@ -957,31 +687,10 @@ class _IndividualChatState extends State<ChatScreen> {
                       ),
                       margin: EdgeInsets.all(2),
                       padding: EdgeInsets.all(2),
-                      child: FutureBuilder<SocialChatModel>(
-                          future: DBApi.getSocialChat(item.replyId),
-                          builder: (context, AsyncSnapshot<SocialChatModel> snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return CupertinoActivityIndicator();
-                            }
-                            else {
-                              if (snapshot.hasError) {
-                                print("error ${snapshot.error}");
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("This message was deleted"),
-                                );
-                              }
+                      child: ChatWidget.reply(context, item.replyMessage, item.replyMediaType,item.replyDateTime),
 
-
-                              else {
-                                return ChatWidget.reply(context, snapshot.data!.message, snapshot.data!.mediaType,snapshot.data!.dateTime);
-
-
-                              }
-                            }
-                          }
-                      ),
                     ),
+
                     ChatWidget.reply(context, item.message, item.mediaType,item.dateTime)
                   ],
                 ),
@@ -1019,7 +728,13 @@ class _IndividualChatState extends State<ChatScreen> {
                   builder: (context,chat,_) {
                     return InkWell(
                       onTap: ()async{
-                        selectMediaAndUpload( MediaType.video,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id,['mp4']);
+                        selectMediaAndUpload( MediaType.video,chat.reply,
+                            chat.selectedModel==null?"":chat.selectedModel.id,
+                            chat.selectedModel==null?"":chat.selectedModel.message,
+                            chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                            chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
+                            ['mp4','MOV','WMV','WEBM']
+                        );
                       },
                       child: Column(
                         children: [
@@ -1038,7 +753,12 @@ class _IndividualChatState extends State<ChatScreen> {
                     builder: (context,chat,_) {
                       return InkWell(
                         onTap: ()async{
-                          selectMediaAndUpload( MediaType.image,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id,['jpg', 'png']);
+                          selectMediaAndUpload( MediaType.image,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id,
+                              chat.selectedModel==null?"":chat.selectedModel.message,
+                              chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                              chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
+
+                              ['jpg', 'png']);
 
                         },
                         child: Column(
@@ -1058,7 +778,10 @@ class _IndividualChatState extends State<ChatScreen> {
                     builder: (context,chat,child) {
                       return InkWell(
                         onTap: ()async{
-                          selectMediaAndUpload( MediaType.audio,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id,['mp3','opus','m4a','amr']);
+                          selectMediaAndUpload( MediaType.audio,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id, chat.selectedModel==null?"":chat.selectedModel.message,
+                              chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                              chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
+                              ['mp3','opus','m4a','amr']);
 
                         },
                         child: Column(
@@ -1074,11 +797,13 @@ class _IndividualChatState extends State<ChatScreen> {
               Expanded(
                 flex: 1,
                 child: Consumer<ChatProvider>(
-
                     builder: (context,chat,_) {
                       return InkWell(
                         onTap: ()async{
-                          selectMediaAndUpload( MediaType.document,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id,['pdf', 'doc']);
+                          selectMediaAndUpload( MediaType.document,chat.reply,chat.selectedModel==null?"":chat.selectedModel.id, chat.selectedModel==null?"":chat.selectedModel.message,
+                              chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                              chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
+                              ['pdf', 'doc']);
 
 
                         },

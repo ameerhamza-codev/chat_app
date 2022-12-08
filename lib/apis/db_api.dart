@@ -30,9 +30,11 @@ class DBApi{
     return chats;
   }
 
-  static Future<String> storeChat(String message,String groupId,mediaType,reply,replyId,receiverId,messageType,forwarded,isRead)async{
+  static Future<String> storeChat(BuildContext context,String message,String groupId,mediaType,reply,replyId,replyMessage,replyType,replyTimestamp,receiverId,messageType,forwarded,isRead)async{
+    final provider = Provider.of<UserDataProvider>(context, listen: false);
     var res=await FirebaseFirestore.instance.collection('social_chat').add({
       "senderId":FirebaseAuth.instance.currentUser!.uid,
+      "senderProfilePic":provider.userData!.profilePicture,
       "receiverId":receiverId,
       "messageType":messageType,
       "forwarded":forwarded,
@@ -42,6 +44,9 @@ class DBApi{
       "groupId":groupId,
       "isReply":reply,
       "replyId":replyId,
+      "replyMessage":replyMessage,
+      "replyMediaType":replyType,
+      "replyDateTime":replyTimestamp,
       "dateTime":DateTime.now().millisecondsSinceEpoch,
     });
     return res.id;
@@ -96,6 +101,20 @@ class DBApi{
       }
     });
     return model!;
+  }
+
+  static Future getReplyChat(String id,BuildContext context)async{
+    final provider = Provider.of<ChatProvider>(context, listen: false);
+    await FirebaseFirestore.instance.collection('social_chat')
+        .doc(id)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> data = documentSnapshot.data()! as Map<String, dynamic>;
+        provider.replyMessages.add(SocialChatModel.fromMap(data, documentSnapshot.reference.id));
+
+      }
+    });
   }
 }
 

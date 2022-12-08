@@ -55,15 +55,11 @@ class ChatWidget{
             )
           )
         else if(mediaType==MediaType.video)
-            InkWell(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ViewImage(message)));
-
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child:  Image.network(message, height: MediaQuery.of(context).size.width*0.5,fit: BoxFit.cover,),
-                )
+            Container(
+              width: MediaQuery.of(context).size.width*0.7,
+              height: MediaQuery.of(context).size.width*0.5,
+              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+              child:  VideoWidget(false, message),
             )
         else if(mediaType==MediaType.audio)
             Container(
@@ -99,23 +95,17 @@ class ChatWidget{
   }
 
   static Widget showVideo(BuildContext context,bool isMe, url){
-    return InkWell(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ViewImage(url)));
-
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width*0.7,
-        height: MediaQuery.of(context).size.width*0.5,
-        child: Card(
-            shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(5),),
-            margin: EdgeInsets.fromLTRB(isMe ? 20 : 10, 5, isMe ? 10 : 20, 5),
-            color: isMe ? meChatBubble : Colors.white, elevation: 1,
-            child : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              child:  VideoWidget(false, url),
-            )
-        ),
+    return Container(
+      width: MediaQuery.of(context).size.width*0.7,
+      height: MediaQuery.of(context).size.width*0.5,
+      child: Card(
+          shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(5),),
+          margin: EdgeInsets.fromLTRB(isMe ? 20 : 10, 5, isMe ? 10 : 20, 5),
+          color: isMe ? meChatBubble : Colors.white, elevation: 1,
+          child : Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            child:  VideoWidget(false, url),
+          )
       ),
     );
   }
