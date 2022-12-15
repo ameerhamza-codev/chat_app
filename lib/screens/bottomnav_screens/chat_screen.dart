@@ -378,7 +378,8 @@ class _IndividualChatState extends State<ChatScreen> {
                                                     hintText: 'Message'
                                                 ),
                                                 onChanged: (value){
-                                                  if(value.isEmpty){
+                                                  print('value llll ${value.length}');
+                                                  if(value.trim().isEmpty){
                                                     chat.setShowSend(false);
                                                   }
                                                   else{
