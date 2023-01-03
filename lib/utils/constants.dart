@@ -25,6 +25,7 @@ class MediaType{
   static String audio="Audio";
   static String video="Video";
   static String document="Document";
+  static String location="Location";
 }
 
 class MessageType{

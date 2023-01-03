@@ -32,7 +32,7 @@ class _GroupChatState extends State<Groups> {
       ),
       body:ListView(
         children: [
-          Container(
+          /*Container(
             margin: EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
               border: Border(
@@ -74,7 +74,7 @@ class _GroupChatState extends State<Groups> {
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, provider.userData!.subGroup4Code!)));
               },
             ),
-          ),
+          ),*/
           //14 groups
           GroupTile(
             title: provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", ""),
@@ -93,11 +93,7 @@ class _GroupChatState extends State<Groups> {
               title: '${provider.userData!.country} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}',
               reciverId: "${provider.userData!.country}${provider.userData!.mainGroupCode}",
             ),
-          if(provider.userData!.city_main)
-            GroupTile(
-              title: '${provider.userData!.location} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}',
-              reciverId: "${provider.userData!.location}${provider.userData!.mainGroupCode}",
-            ),
+
 
           //subgroup1
           if(provider.userData!.country_sub1)
@@ -105,11 +101,7 @@ class _GroupChatState extends State<Groups> {
               title: '${provider.userData!.country} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}',
               reciverId: "${provider.userData!.country}${provider.userData!.subGroup1Code}",
             ),
-          if(provider.userData!.city_sub1)
-            GroupTile(
-              title: '${provider.userData!.location} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}',
-              reciverId: "${provider.userData!.location}${provider.userData!.subGroup1Code}",
-            ),
+
 
           //subgroup2
           if(provider.userData!.country_sub2)
@@ -117,11 +109,7 @@ class _GroupChatState extends State<Groups> {
               title: '${provider.userData!.country} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}',
               reciverId: "${provider.userData!.country}${provider.userData!.subGroup2Code}",
             ),
-          if(provider.userData!.city_sub2)
-            GroupTile(
-              title: '${provider.userData!.location} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}',
-              reciverId: "${provider.userData!.location}${provider.userData!.subGroup2Code}",
-            ),
+
 
           //subgroup3
           if(provider.userData!.country_sub3)
@@ -129,11 +117,7 @@ class _GroupChatState extends State<Groups> {
               title: '${provider.userData!.country} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}',
               reciverId: "${provider.userData!.country}${provider.userData!.subGroup3Code}",
             ),
-          if(provider.userData!.city_sub3)
-            GroupTile(
-              title: '${provider.userData!.location} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}',
-              reciverId: "${provider.userData!.location}${provider.userData!.subGroup3Code}",
-            ),
+
 
 
           //subgroup4
@@ -142,11 +126,7 @@ class _GroupChatState extends State<Groups> {
               title: '${provider.userData!.country} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}',
               reciverId: "${provider.userData!.country}${provider.userData!.subGroup4Code}",
             ),
-          if(provider.userData!.city_sub4)
-            GroupTile(
-              title: '${provider.userData!.location} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}',
-              reciverId: "${provider.userData!.location}${provider.userData!.subGroup4Code}",
-            ),
+
 
 
           //occupation
@@ -155,17 +135,45 @@ class _GroupChatState extends State<Groups> {
               title: '${provider.userData!.country} - ${provider.userData!.occupation!}',
               reciverId: "${provider.userData!.country}${provider.userData!.occupation}",
             ),
+          if(provider.userData!.country_restype)
+            GroupTile(
+              title: '${provider.userData!.country} - ${provider.userData!.additionalResponsibility!}',
+              reciverId: "${provider.userData!.country}${provider.userData!.additionalResponsibility}",
+            ),
+
+          //city groups
+          if(provider.userData!.city_main)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.mainGroupCode!.replaceAll("${provider.userData!.mainGroupCode!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.mainGroupCode}",
+            ),
+          if(provider.userData!.city_sub1)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup1!.replaceAll("${provider.userData!.subGroup1Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup1Code}",
+            ),
+          if(provider.userData!.city_sub2)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup2!.replaceAll("${provider.userData!.subGroup2Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup2Code}",
+            ),
+          if(provider.userData!.city_sub3)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup3!.replaceAll("${provider.userData!.subGroup3Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup3Code}",
+            ),
+          if(provider.userData!.city_sub4)
+            GroupTile(
+              title: '${provider.userData!.location} - ${provider.userData!.subGroup4!.replaceAll("${provider.userData!.subGroup4Code!} - ", "")}',
+              reciverId: "${provider.userData!.location}${provider.userData!.subGroup4Code}",
+            ),
           if(provider.userData!.city_occupation)
             GroupTile(
               title: '${provider.userData!.location} - ${provider.userData!.occupation!}',
               reciverId: "${provider.userData!.location}${provider.userData!.occupation}",
             ),
 
-          if(provider.userData!.country_restype)
-            GroupTile(
-              title: '${provider.userData!.country} - ${provider.userData!.additionalResponsibility!}',
-              reciverId: "${provider.userData!.country}${provider.userData!.additionalResponsibility}",
-            ),
+
           if(provider.userData!.city_restype)
             GroupTile(
               title: '${provider.userData!.location} - ${provider.userData!.additionalResponsibility!}',

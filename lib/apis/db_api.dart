@@ -30,6 +30,39 @@ class DBApi{
     return chats;
   }
 
+  static Future<List<SocialChatModel>> getUnreadMessageCount(BuildContext context,chatHeadId)async{
+    List<SocialChatModel> chats=[];
+    await FirebaseFirestore.instance.collection('social_chat').where("groupId",isEqualTo: chatHeadId)
+        .get().then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+        SocialChatModel model=SocialChatModel.fromMap(data, doc.reference.id);
+        if(!model.isRead && model.senderId!=FirebaseAuth.instance.currentUser!.uid){
+          chats.add(model);
+        }
+      });
+    });
+    print("chat length ${chats.length}");
+    return chats;
+  }
+  static Future changeMessageToRead(BuildContext context,chatHeadId)async{
+    await FirebaseFirestore.instance.collection('social_chat').where("groupId",isEqualTo: chatHeadId)
+        .get().then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+        SocialChatModel model=SocialChatModel.fromMap(data, doc.reference.id);
+        if(!model.isRead){
+          FirebaseFirestore.instance.collection('social_chat').doc(model.id).update({
+            'isRead':true
+          }).then((value){
+            print('message ${model.id} is marked as read');
+          });
+        }
+      });
+    });
+  }
+
+
   static Future<String> storeChat(BuildContext context,String message,String groupId,mediaType,reply,replyId,replyMessage,replyType,replyTimestamp,receiverId,messageType,forwarded,isRead)async{
     final provider = Provider.of<UserDataProvider>(context, listen: false);
     var res=await FirebaseFirestore.instance.collection('social_chat').add({

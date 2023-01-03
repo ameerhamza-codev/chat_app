@@ -17,12 +17,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocode/geocode.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:paginate_firestore/bloc/pagination_listeners.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart';
+import '../../apis/location.dart';
 import '../../provider/user_data_provider.dart';
 import '../../utils/global.dart';
 import '../forward_message.dart';
@@ -627,6 +629,8 @@ class _IndividualChatState extends State<ChatScreen> {
             ChatWidget.showText(isMe, item.message, item.dateTime)
           else if(item.mediaType=="Audio")
             ChatWidget.showAudio(isMe, item.message, item.dateTime)
+          else if(item.mediaType==MediaType.location)
+            ChatWidget.showLocation(isMe, item.message, item.dateTime)
           else if(item.mediaType==MediaType.video)
               ChatWidget.showVideo(context,isMe, item.message)
             else if(item.mediaType==MediaType.document)
@@ -812,6 +816,47 @@ class _IndividualChatState extends State<ChatScreen> {
                           children: [
                             Icon(Icons.insert_drive_file,color:primaryColor),
                             Text("Document")
+                          ],
+                        ),
+                      );
+                    }
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Consumer<ChatProvider>(
+                    builder: (context,chat,_) {
+                      return InkWell(
+                        onTap: ()async{
+                            List<double> coordinates=await getUserCurrentCoordinates();
+                            GeoCode geoCode = GeoCode();
+                            Address address=await geoCode.reverseGeocoding(latitude: coordinates[0], longitude: coordinates[1]);
+                            String formattedAddress="${coordinates[0]}:${coordinates[1]}+${address.streetAddress}, ${address.city}, ${address.countryName}, ${address.postal}";
+                            setState(() {
+                              print('formattedAddress $formattedAddress');
+                            });
+                            await DBApi.storeChat(
+                                context,
+                                formattedAddress,
+                                widget.chatheadId,
+                                MediaType.location,
+                                chat.reply,
+                                chat.selectedModel==null?"":chat.selectedModel.id,
+                                chat.selectedModel==null?"":chat.selectedModel.message,
+                                chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                                chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
+                                "all",
+                                widget.messageType,
+                                false,
+                                false
+                            );
+
+
+                        },
+                        child: Column(
+                          children: [
+                            Icon(Icons.place,color:primaryColor),
+                            Text("Location")
                           ],
                         ),
                       );

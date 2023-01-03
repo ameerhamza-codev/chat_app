@@ -3,6 +3,7 @@ import 'package:chat_app/screens/doc_viewer.dart';
 import 'package:chat_app/widgets/video_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:timeago/timeago.dart';
 
 import '../apis/db_api.dart';
@@ -66,6 +67,46 @@ class ChatWidget{
                 height: 60,
                 child: AudioBubble(filepath: message,timeStamp: timestamp)
             )
+        else if(mediaType==MediaType.location)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    /* if(item.isReply)
+                buildReplyItem(context, item.replyId),*/
+                    Container(
+                      constraints: BoxConstraints(minWidth: 150),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(message.substring(message.indexOf('+')+1), style: TextStyle(color: Colors.black),),
+                          SizedBox(height: 5,),
+                          InkWell(
+                            onTap: (){
+                              print('lat ${message.substring(0, message.indexOf(':'))} : lng ${message.substring(message.indexOf(':')+1, message.indexOf('+'))}');
+                              double lat=double.parse(message.substring(0, message.indexOf(':')));
+                              double lng=double.parse(message.substring(message.indexOf(':')+1, message.indexOf('+')));
+                              MapsLauncher.launchCoordinates(lat, lng);
+                            },
+                            child: Text('Show on map', style: TextStyle(color: primaryColor)),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(height: 3, width: 0),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(format(DateTime.fromMillisecondsSinceEpoch(timestamp)), textAlign: TextAlign.end, style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey,
+                        ),),
+                        Container(width: 3),
+                      ],
+                    )
+                  ],
+                )
 
       ],
     );
@@ -173,6 +214,57 @@ class ChatWidget{
                     color: Colors.black)
                 ),
               ),
+              Container(height: 3, width: 0),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(format(DateTime.fromMillisecondsSinceEpoch(timestamp)), textAlign: TextAlign.end, style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey,
+                  ),),
+                  Container(width: 3),
+                ],
+              )
+            ],
+          ),
+        )
+    );
+  }
+
+  static Widget showLocation(bool isMe,String message,int timestamp){
+    return Card(
+        shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(5),),
+        margin: EdgeInsets.fromLTRB(isMe ? 20 : 10, 5, isMe ? 10 : 20, 5),
+        color: isMe ? meChatBubble : Colors.white, elevation: 1,
+        child : Padding(
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              /* if(item.isReply)
+                buildReplyItem(context, item.replyId),*/
+              Container(
+                constraints: BoxConstraints(minWidth: 150),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(message.substring(message.indexOf('+')+1), style: TextStyle(color: Colors.black),),
+                    SizedBox(height: 5,),
+                    InkWell(
+                      onTap: (){
+                        print('lat ${message.substring(0, message.indexOf(':'))} : lng ${message.substring(message.indexOf(':')+1, message.indexOf('+'))}');
+                        double lat=double.parse(message.substring(0, message.indexOf(':')));
+                        double lng=double.parse(message.substring(message.indexOf(':')+1, message.indexOf('+')));
+                        MapsLauncher.launchCoordinates(lat, lng);
+                        },
+                      child: Text('Show on map', style: TextStyle(color: primaryColor)),
+                    )
+                  ],
+                ),
+              ),
+
               Container(height: 3, width: 0),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
