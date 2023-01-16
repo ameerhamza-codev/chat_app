@@ -35,6 +35,8 @@ class _SettingsState extends State<Settings> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(user.userData!.name!, style: TextStyle(color: colorWhite,fontSize: 24, fontWeight: FontWeight.bold)),
+                          Text(user.userData!.dob!, style: TextStyle(color: colorWhite,fontSize: 16, fontWeight: FontWeight.w300)),
+                          Text(user.userData!.gender!, style: TextStyle(color: colorWhite,fontSize: 16, fontWeight: FontWeight.w300)),
                           // Text("View and edit profile", style: TextStyle(color: textColor)),
                         ],
                       ),
