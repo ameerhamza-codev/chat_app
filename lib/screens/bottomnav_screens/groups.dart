@@ -141,6 +141,31 @@ class _GroupChatState extends State<Groups> {
                 ),
 
 
+              if(appUser.subGroup1Representative)
+                GroupTile(
+                  title: 'Rep-${appUser.subGroup1!.replaceAll("${appUser.subGroup1Code!} - ", "")}',
+                  reciverId: appUser.subGroup1Code!,
+                ),
+
+              if(appUser.subGroup2Representative)
+                GroupTile(
+                  title: 'Rep-${appUser.subGroup2!.replaceAll("${appUser.subGroup2Code!} - ", "")}',
+                  reciverId: appUser.subGroup2Code!,
+                ),
+
+              if(appUser.subGroup3Representative)
+                GroupTile(
+                  title: 'Rep-${appUser.subGroup3!.replaceAll("${appUser.subGroup3Code!} - ", "")}',
+                  reciverId: appUser.subGroup3Code!,
+                ),
+
+              if(appUser.subGroup4Representative)
+                GroupTile(
+                  title: 'Rep-${appUser.subGroup4!.replaceAll("${appUser.subGroup4Code!} - ", "")}',
+                  reciverId: appUser.subGroup4Code!,
+                ),
+
+
               //sub group 3 & 4
               /*  GroupTile(
             title: appUser.subGroup3!.replaceAll("${appUser.subGroup3Code!} - ", ""),

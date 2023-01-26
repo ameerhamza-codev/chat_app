@@ -2,6 +2,7 @@ import 'package:chat_app/provider/forward_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/user_data_provider.dart';
 import '../screens/bottomnav_screens/chat_screen.dart';
 import '../utils/constants.dart';
 
@@ -31,7 +32,8 @@ class GroupTile extends StatelessWidget {
         trailing: Icon(forward.groupList.contains(reciverId)?Icons.check_circle:Icons.arrow_forward_ios_rounded,color: forward.groupList.contains(reciverId)?primaryColor:Colors.grey, size: 15),
         title: Text(title),
         onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, reciverId)));
+          final provider = Provider.of<UserDataProvider>(context, listen: false);
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.group, '$reciverId${provider.userData!.gender}')));
 
         },
       ),

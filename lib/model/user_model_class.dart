@@ -7,7 +7,7 @@ class AppUser{
          jobDescription, landline, location, mainGroup, mainGroupCode, mobile, name, occupation, password, res_type, status, token,
          subGroup1, subGroup1Code, subGroup2, subGroup2Code, subGroup3, subGroup3Code, subGroup4, subGroup4Code,profilePicture;
   int? createdAt;
-  bool? action, group, refer, subGroup1Representative, subGroup2Representative, subGroup3Representative, subGroup4Representative;
+  bool action, group, refer, subGroup1Representative, subGroup2Representative, subGroup3Representative, subGroup4Representative;
   bool expatriates,associatidWithAddRes;
   bool country_main;
   bool country_sub1;

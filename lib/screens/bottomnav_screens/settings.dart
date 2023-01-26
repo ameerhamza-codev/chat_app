@@ -68,7 +68,9 @@ class _SettingsState extends State<Settings> {
             ),
             Divider(height: 0),
             InkWell(
-              onTap: (){},
+              onTap: (){
+                
+              },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
                 child: Row(
