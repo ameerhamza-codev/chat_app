@@ -1,3 +1,4 @@
+import 'package:chat_app/screens/setting_screens/edit_profile.dart';
 import 'package:chat_app/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,9 @@ class _SettingsState extends State<Settings> {
             ),
 
             InkWell(
-              onTap: (){},
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditProfile()));
+              },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
                 child: Row(
