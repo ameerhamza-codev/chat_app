@@ -1,6 +1,6 @@
+import 'package:chat_app/model/invited_user_model.dart';
 import 'package:chat_app/model/user_model_class.dart';
-import 'package:chat_app/screens/bottom_navbar.dart';
-import 'package:chat_app/screens/register.dart';
+import 'package:chat_app/screens/navigator/bottom_navbar.dart';
 import 'package:chat_app/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
-import '../provider/user_data_provider.dart';
+import '../../provider/user_data_provider.dart';
+import 'register.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class LoginState extends State<Login> {
       else{
         querySnapshot.docs.forEach((element) {
           Map<String, dynamic> data = element.data()! as Map<String, dynamic>;
-          AppUser userData = AppUser.fromMap(data, element.id);
+          InvitedUserModel userData = InvitedUserModel.fromMap(data, element.reference.id);
           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Register(invitedUser: userData)));
 
         });
@@ -102,9 +103,20 @@ class LoginState extends State<Login> {
           pr.close();
           Map<String, dynamic> data = documentSnapshot.data()! as Map<String, dynamic>;
           AppUser user=AppUser.fromMap(data,documentSnapshot.reference.id);
-          final provider = Provider.of<UserDataProvider>(context, listen: false);
-          provider.setUserData(user);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomNavBar()));
+          if(user.status=="Blocked"){
+            await FirebaseAuth.instance.signOut();
+            CoolAlert.show(
+              context: context,
+              type: CoolAlertType.error,
+              text: "Your account is blocked by admin",
+            );
+          }
+          else{
+            final provider = Provider.of<UserDataProvider>(context, listen: false);
+            provider.setUserData(user);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomNavBar()));
+          }
+
 
         }
         else{

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +17,12 @@ String prettyDuration(Duration d) {
   var sec = d.inSeconds < 10 ? "0${d.inSeconds}" : d.inSeconds.toString();
   return min + ":" + sec;
 }
+const List<String> list = <String>['Male', 'Female'];
 
+const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+Random _rnd = Random();
+String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+    length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
 const profileImage="https://firebasestorage.googleapis.com/v0/b/chat-app-2ea88.appspot.com/o/profile.png?alt=media&token=4ce57725-0113-48d9-a6f7-cea8f4e9f076";
 
@@ -49,8 +56,10 @@ String getId(ids,myId){
 }
 
 String getRecieverId(ids){
+  print('wanted');
   String wantedId="";
   String user1 = ids.substring(0, ids.indexOf('_'));
+  print('wanted user 1 $user1');
   String user2 = ids.substring(ids.indexOf('_')+1);
   print("id1 : $user1, id2 : $user2");
   if(user1==FirebaseAuth.instance.currentUser!.uid){
@@ -59,7 +68,9 @@ String getRecieverId(ids){
   if(user2==FirebaseAuth.instance.currentUser!.uid){
     wantedId=user1;
   }
+  print('wanted id $wantedId');
   return wantedId;
+
 }
 
 bool checkIfChatExists(ids,myId,otherId){

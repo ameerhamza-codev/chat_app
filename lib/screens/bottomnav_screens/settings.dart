@@ -1,11 +1,15 @@
+import 'package:chat_app/screens/image_viewer.dart';
 import 'package:chat_app/screens/setting_screens/edit_profile.dart';
+import 'package:chat_app/screens/setting_screens/profile.dart';
+import 'package:chat_app/screens/setting_screens/referral.dart';
+import 'package:chat_app/screens/setting_screens/report_screen.dart';
 import 'package:chat_app/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/user_data_provider.dart';
-import '../login.dart';
+import '../auth/login.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -42,9 +46,15 @@ class _SettingsState extends State<Settings> {
                         ],
                       ),
                       Spacer(),
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(user.userData!.profilePicture!),
-                        radius:50,
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ViewImage(user.userData!.profilePicture!)));
+
+                        },
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(user.userData!.profilePicture!),
+                          radius:50,
+                        ),
                       ),
                     ],
                   ),
@@ -52,7 +62,23 @@ class _SettingsState extends State<Settings> {
                 );
               },
             ),
-
+            InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfileScreen()));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+                child: Row(
+                  children: <Widget>[
+                    Text("View Profile", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
+                    Spacer(),
+                    Icon(Icons.person_sharp, color: primaryColor),
+                    Container(width: 10)
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 0),
             InkWell(
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditProfile()));
@@ -72,7 +98,25 @@ class _SettingsState extends State<Settings> {
             Divider(height: 0),
             InkWell(
               onTap: (){
-                
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ReportScreen()));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+                child: Row(
+                  children: <Widget>[
+                    Text("Report Abuse", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
+                    Spacer(),
+                    Icon(Icons.report, color: primaryColor),
+                    Container(width: 10)
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 0),
+            if(provider.userData!.refer)
+             InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Referal()));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),

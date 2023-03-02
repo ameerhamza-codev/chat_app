@@ -5,8 +5,6 @@ import 'package:chat_app/apis/image_api.dart';
 import 'package:chat_app/model/social_chat_model.dart';
 import 'package:chat_app/model/user_model_class.dart';
 import 'package:chat_app/provider/chat_provider.dart';
-import 'package:chat_app/screens/chat.dart';
-import 'package:chat_app/screens/image_viewer.dart';
 import 'package:chat_app/utils/constants.dart';
 import 'package:chat_app/widgets/chat_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,7 +25,7 @@ import 'package:timeago/timeago.dart';
 import '../../apis/location.dart';
 import '../../provider/user_data_provider.dart';
 import '../../utils/global.dart';
-import '../forward_message.dart';
+import 'forward_message.dart';
 
 class ChatScreen extends StatefulWidget {
   String messageType;

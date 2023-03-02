@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../model/chat_head_model.dart';
-import '../model/user_model_class.dart';
-import '../provider/user_data_provider.dart';
-import '../utils/constants.dart';
-import 'bottomnav_screens/chat_screen.dart';
+import '../../model/chat_head_model.dart';
+import '../../model/user_model_class.dart';
+import '../../provider/user_data_provider.dart';
+import '../../utils/constants.dart';
+import 'chat_screen.dart';
 
 class SearchIndividual extends StatefulWidget {
   const SearchIndividual({Key? key}) : super(key: key);
@@ -88,7 +88,7 @@ class _SearchIndividualState extends State<SearchIndividual> {
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance.collection('users')
-                    .where("email",isNotEqualTo: FirebaseAuth.instance.currentUser!.email).snapshots(),
+                    .where("email",isNotEqualTo: provider.userData!.email).snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     print(snapshot.error.toString());
@@ -149,7 +149,7 @@ class _SearchIndividualState extends State<SearchIndividual> {
                                 "user2":model.userId,
                                 "timestamp":DateTime.now().millisecondsSinceEpoch,
                               });
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.individual,"${FirebaseAuth.instance.currentUser!.uid}.${model.userId}")));
+                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>  ChatScreen(MessageType.individual,"${FirebaseAuth.instance.currentUser!.uid}_${model.userId}")));
 
                             }
                           },

@@ -1,5 +1,4 @@
 import 'package:chat_app/model/social_chat_model.dart';
-import 'package:chat_app/screens/chat.dart';
 import 'package:chat_app/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/material.dart';
 import '../../apis/db_api.dart';
 import '../../model/chat_head_model.dart';
 import '../../model/user_model_class.dart';
-import '../search_individual.dart';
+import 'search_individual.dart';
 import 'chat_screen.dart';
 
 class IndividualChat extends StatefulWidget {
@@ -112,11 +111,17 @@ class _IndividualChatState extends State<IndividualChat> {
 
 
                                             else {
-                                              return unreadsnap.data!.isNotEmpty?CircleAvatar(
-                                                child:Text(unreadsnap.data!.length.toString(),style: TextStyle(fontSize: 12),),
-                                                radius: 10,
-                                                backgroundColor: primaryColor,
-                                              ):Container(height: 6,width: 5,);
+                                              if(unreadsnap.data!=null){
+                                                return unreadsnap.data!.isNotEmpty?CircleAvatar(
+                                                  child:Text(unreadsnap.data!.length.toString(),style: TextStyle(fontSize: 12),),
+                                                  radius: 10,
+                                                  backgroundColor: primaryColor,
+                                                ):Container(height: 6,width: 5,);
+                                              }
+                                              else{
+                                                return Container(height: 6,width: 5,);
+                                              }
+
 
                                             }
                                           }

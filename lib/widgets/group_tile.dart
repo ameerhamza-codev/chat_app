@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../provider/user_data_provider.dart';
-import '../screens/bottomnav_screens/chat_screen.dart';
+import '../screens/chat/chat_screen.dart';
 import '../utils/constants.dart';
 
 class GroupTile extends StatelessWidget {

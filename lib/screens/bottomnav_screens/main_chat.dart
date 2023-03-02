@@ -1,6 +1,6 @@
 import 'package:chat_app/model/chat_head_model.dart';
-import 'package:chat_app/screens/bottomnav_screens/chat_screen.dart';
-import 'package:chat_app/screens/bottomnav_screens/individual_chat.dart';
+import 'package:chat_app/screens/chat/chat_screen.dart';
+import 'package:chat_app/screens/chat/individual_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +11,7 @@ import '../../apis/db_api.dart';
 import '../../model/user_model_class.dart';
 import '../../provider/user_data_provider.dart';
 import '../../utils/constants.dart';
-import '../search_individual.dart';
+import '../chat/search_individual.dart';
 
 class MainChat extends StatefulWidget {
   const MainChat({Key? key}) : super(key: key);

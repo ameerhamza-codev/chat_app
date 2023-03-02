@@ -1,11 +1,11 @@
 
-import 'package:chat_app/screens/bottomnav_screens/chat_screen.dart';
+import 'package:chat_app/screens/chat/chat_screen.dart';
 import 'package:chat_app/screens/bottomnav_screens/groups.dart';
 import 'package:chat_app/screens/bottomnav_screens/main_chat.dart';
 import 'package:chat_app/screens/bottomnav_screens/settings.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/constants.dart';
+import '../../utils/constants.dart';
 
 class BottomNavBar extends StatefulWidget {
 

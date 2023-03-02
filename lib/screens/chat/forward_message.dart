@@ -7,10 +7,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../apis/db_api.dart';
-import '../model/user_model_class.dart';
-import '../provider/user_data_provider.dart';
-import '../utils/constants.dart';
+import '../../apis/db_api.dart';
+import '../../model/user_model_class.dart';
+import '../../provider/user_data_provider.dart';
+import '../../utils/constants.dart';
 class ForwardMessage extends StatefulWidget {
   List<SocialChatModel> chat;
 

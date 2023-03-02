@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:chat_app/model/user_model_class.dart';
-import 'package:chat_app/screens/bottom_navbar.dart';
+import 'package:chat_app/screens/navigator/bottom_navbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/user_data_provider.dart';
 import '../utils/constants.dart';
-import 'login.dart';
+import 'auth/login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
