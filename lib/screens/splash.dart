@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chat_app/apis/db_api.dart';
 import 'package:chat_app/model/user_model_class.dart';
 import 'package:chat_app/screens/navigator/bottom_navbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,6 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigationPage() async{
+    await DBApi.setAnnouncementStatus();
     if(FirebaseAuth.instance.currentUser!=null){
       await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get().then((DocumentSnapshot documentSnapshot) async{
         if (documentSnapshot.exists) {

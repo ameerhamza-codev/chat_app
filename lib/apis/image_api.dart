@@ -15,6 +15,17 @@ class ImageApi{
       await FirebaseFirestore.instance.collection('social_chat').doc(documentId).update({
         "message":value,
       });
+
+      await FirebaseFirestore.instance.collection('announcement').where('receiverId',isEqualTo: documentId).get().then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) async{
+
+          await FirebaseFirestore.instance.collection('announcement').doc(doc.reference.id).update({
+            "message":value,
+          });
+        });
+      });
+
+
     });
   }
 }

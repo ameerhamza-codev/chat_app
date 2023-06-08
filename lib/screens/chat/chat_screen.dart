@@ -17,9 +17,6 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocode/geocode.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:paginate_firestore/bloc/pagination_listeners.dart';
-import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart';
 import '../../apis/location.dart';
@@ -86,7 +83,6 @@ class _IndividualChatState extends State<ChatScreen> {
       provider.chatReset();
     });
   }
-  PaginateRefreshedChangeListener refreshChangeListener = PaginateRefreshedChangeListener();
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +167,7 @@ class _IndividualChatState extends State<ChatScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  Expanded(
+                  /*Expanded(
                     child:RefreshIndicator(
                       onRefresh: () async {
                         refreshChangeListener.refreshed = true;
@@ -242,8 +238,84 @@ class _IndividualChatState extends State<ChatScreen> {
                         },
                       ),
                     ),
+                  ),*/
+                  Expanded(
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance.collection('social_chat')
+                          .where("groupId",isEqualTo: widget.chatheadId)
+                          .orderBy('dateTime',descending: true).snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Column(
+                              children: [
+                                Image.asset("assets/images/wrong.png",width: 150,height: 150,),
+                                const Text("Something Went Wrong",style: TextStyle(color: Colors.black))
+
+                              ],
+                            ),
+                          );
+                        }
+
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.data!.size==0){
+                          return const Center(
+                              child: Text("No Messages",style: TextStyle(color: Colors.black))
+                          );
+
+                        }
+
+                        return ListView(
+                          shrinkWrap: true,
+                          reverse: true,
+                          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+                            SocialChatModel model=SocialChatModel.fromMap(data,document.reference.id);
+                            return Consumer<ChatProvider>(
+                              builder: (context,chat,child){
+                                return GestureDetector(
+
+                                    onLongPress: (){
+                                      chat.setOptions(true);
+
+                                      if(chat.selectedList.contains(model)){
+                                        chat.removeSelectedList(model);
+                                        if(chat.selectedList.isNotEmpty){
+                                          chat.setSelectedModel(chat.selectedList.last);
+                                        }
+                                        else
+                                          chat.setSelectedModel(null);
+                                      }
+                                      else{
+                                        chat.setSelectedModel(model);
+                                        chat.addSelectedList(model);
+                                      }
+
+
+                                      chat.selectedList.forEach((element) {
+                                        print('selected list ${element.id}');
+                                      });
+                                      print("${chat.selectedModel==null?"null id":"this is the id"}");
+                                    },
+                                    child: model.isReply?buildReplyItem(context, model,chat.selectedModel==null?"":chat.selectedModel.id):
+                                    model.message=="uploading"?
+                                    ChatWidget.loader(context, model.senderId==FirebaseAuth.instance.currentUser!.uid?true:false, model.senderId)
+                                        :
+                                    buildListItemView(context,model)
+                                );
+                              },
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
                   ),
-                    Consumer<ChatProvider>(
+                  Consumer<ChatProvider>(
                       builder: (context,chat,child){
                         if(!chat.options)
                           return Container(
@@ -712,7 +784,7 @@ class _IndividualChatState extends State<ChatScreen> {
     );
   }
   Future bottomSheet(BuildContext context) {
-    return showMaterialModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       builder: (context) =>Container(
