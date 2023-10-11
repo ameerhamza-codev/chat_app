@@ -1,5 +1,6 @@
 import 'package:chat_app/model/chat_head_model.dart';
 import 'package:chat_app/screens/announcement_screen.dart';
+import 'package:chat_app/screens/bottomnav_screens/settings.dart';
 import 'package:chat_app/screens/chat/chat_screen.dart';
 import 'package:chat_app/screens/chat/individual_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,9 +45,9 @@ class _MainChatState extends State<MainChat> {
                 labelColor: colorWhite,
                 indicatorColor: colorWhite,
                 tabs: [
-                  Tab(child:Text('Social', style: TextStyle(color: colorWhite, fontSize: 14, fontWeight: FontWeight.w600),)),
-                  Tab(child: Text('Individual', style: TextStyle(color: colorWhite, fontSize: 14, fontWeight: FontWeight.w600),)),
-                  Tab(child: Text('Announcement', style: TextStyle(color: colorWhite, fontSize: 14, fontWeight: FontWeight.w600),)),
+                  Tab(child:Icon(Icons.groups)),
+                  Tab(child: Icon(Icons.person)),
+                  Tab(child: Icon(Icons.more_vert_rounded)),
                 ],
               )
             ],
@@ -57,7 +58,8 @@ class _MainChatState extends State<MainChat> {
             ChatScreen(MessageType.social,provider.userData!.mainGroupCode!),
 
             IndividualChat(),
-            AnnouncementScreen(),
+            SettingsScreen()
+            //AnnouncementScreen(),
 
 
           ],

@@ -4,11 +4,13 @@ import 'package:chat_app/screens/navigator/bottom_navbar.dart';
 import 'package:chat_app/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
+import '../../apis/auth_api.dart';
 import '../../provider/user_data_provider.dart';
 import 'register.dart';
 
@@ -24,8 +26,9 @@ class Login extends StatefulWidget {
 class LoginState extends State<Login> {
   bool _isObscure = true;
   final TextEditingController inviteController = new TextEditingController();
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
+
+  final TextEditingController phoneController = new TextEditingController();
+  String phone='+92';
 
   final _inviteKey = GlobalKey<FormState>();
   final _loginKey = GlobalKey<FormState>();
@@ -91,7 +94,7 @@ class LoginState extends State<Login> {
           );
         });
   }
-  login()async{
+  /*login()async{
     final ProgressDialog pr = ProgressDialog(context: context);
     pr.show(max: 100, msg: 'Authenticating User');
     await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -138,7 +141,7 @@ class LoginState extends State<Login> {
         text: error.toString(),
       );
     });
-  }
+  }*/
 
 
   @override
@@ -179,61 +182,53 @@ class LoginState extends State<Login> {
                                 color: primaryColor, fontWeight: FontWeight.bold, fontSize: 24
                             )),
                           ),
-                          TextFormField(
-                            controller: emailController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter email';
-                              }
+                          Row(
+                            children: [
+                              Center(
+                                child: CountryCodePicker(
+                                  onChanged: (value){
 
-                              return null;
-                            },
-                            keyboardType: TextInputType.emailAddress,
-                            style: const TextStyle(color: textColor),
-                            decoration: InputDecoration(labelText: "Email",
-                              labelStyle: TextStyle(color: Colors.blueGrey[400]),
-                              enabledBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blueGrey, width: 1),
-                              ),
-                              focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blueGrey, width: 2),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                          TextFormField(
-                            obscureText: _isObscure,
-                            controller: passwordController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter password';
-                              }
-
-                              return null;
-                            },
-                            style: const TextStyle(color: textColor),
-                            decoration: InputDecoration(labelText: "Password",
-                              labelStyle: TextStyle(color: Colors.blueGrey[400]),
-                              enabledBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blueGrey, width: 1),
-                              ),
-                              focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blueGrey, width: 2),
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isObscure ? Icons.visibility : Icons.visibility_off,
+                                    phone=value.dialCode!;
+                                    print('phone $phone');
+                                  },
+                                  // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                                  initialSelection: 'PK',
+                                  favorite: ['+92','PK'],
+                                  // optional. Shows only country name and flag
+                                  showCountryOnly: false,
+                                  // optional. Shows only country name and flag when popup is closed.
+                                  showOnlyCountryWhenClosed: false,
+                                  // optional. aligns the flag and the Text left
+                                  alignLeft: false,
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isObscure = !_isObscure;
-                                  });
-                                },
                               ),
-                            ),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: phoneController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter phone number';
+                                    }
 
+                                    return null;
+                                  },
+                                  keyboardType: TextInputType.emailAddress,
+                                  style: const TextStyle(color: textColor),
+                                  decoration: InputDecoration(labelText: "Phone",
+                                    labelStyle: TextStyle(color: Colors.blueGrey[400]),
+                                    enabledBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.blueGrey, width: 1),
+                                    ),
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.blueGrey, width: 2),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 25),
+
                           Container(
                             width: double.infinity,
                             height: 40,
@@ -241,9 +236,32 @@ class LoginState extends State<Login> {
                               child: Text("SUBMIT",
                                 style: TextStyle(color: Colors.white),),
 
-                              onPressed: () {
+                              onPressed: () async{
                                 if(_loginKey.currentState!.validate()){
-                                  login();
+                                  final ProgressDialog pr = ProgressDialog(context: context);
+                                  pr.show(max: 100, msg: 'Please Wait',barrierDismissible: true);
+                                  await AuthenticationApi.login('$phone${phoneController.text}').then((value){
+                                    pr.close();
+                                    if(value){
+                                      AuthenticationApi authApi=AuthenticationApi();
+                                      authApi.verifyPhoneNumber('$phone${phoneController.text}', context, 1);
+                                    }
+                                    else{
+                                      CoolAlert.show(
+                                        context: context,
+                                        type: CoolAlertType.error,
+                                        text: 'No user found. Please register $phone${phoneController.text}',
+                                      );
+                                    }
+                                  }).onError((error, stackTrace) {
+                                    pr.close();
+                                    CoolAlert.show(
+                                      context: context,
+                                      type: CoolAlertType.error,
+                                      text: error.toString(),
+                                    );
+                                  });
+
                                 }
                               },
                             ),

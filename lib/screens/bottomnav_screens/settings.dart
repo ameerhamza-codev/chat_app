@@ -1,5 +1,7 @@
+import 'package:chat_app/screens/announcement_screen.dart';
 import 'package:chat_app/screens/image_viewer.dart';
 import 'package:chat_app/screens/setting_screens/edit_profile.dart';
+import 'package:chat_app/screens/setting_screens/more_settings.dart';
 import 'package:chat_app/screens/setting_screens/profile.dart';
 import 'package:chat_app/screens/setting_screens/referral.dart';
 import 'package:chat_app/screens/setting_screens/report_screen.dart';
@@ -11,14 +13,14 @@ import 'package:provider/provider.dart';
 import '../../provider/user_data_provider.dart';
 import '../auth/login.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<UserDataProvider>(context, listen: false);
@@ -29,8 +31,8 @@ class _SettingsState extends State<Settings> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Container(height: 30, color: primaryColor,),
-            Consumer<UserDataProvider>(
+
+            /*Consumer<UserDataProvider>(
               builder: (context,user,child){
                 return Container(
                   color: primaryColor,
@@ -61,7 +63,7 @@ class _SettingsState extends State<Settings> {
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
                 );
               },
-            ),
+            ),*/
             InkWell(
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ProfileScreen()));
@@ -70,7 +72,7 @@ class _SettingsState extends State<Settings> {
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
                 child: Row(
                   children: <Widget>[
-                    Text("View Profile", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
+                    Text("Profile", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
                     Spacer(),
                     Icon(Icons.person_sharp, color: primaryColor),
                     Container(width: 10)
@@ -81,21 +83,39 @@ class _SettingsState extends State<Settings> {
             Divider(height: 0),
             InkWell(
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditProfile()));
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AnnouncementScreen()));
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
                 child: Row(
                   children: <Widget>[
-                    Text("Edit Profile", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
+                    Text("Announcements", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
                     Spacer(),
-                    Icon(Icons.edit_note, color: primaryColor),
+                    Icon(Icons.announcement, color: primaryColor),
                     Container(width: 10)
                   ],
                 ),
               ),
             ),
             Divider(height: 0),
+            InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MoreSettings()));
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+                child: Row(
+                  children: <Widget>[
+                    Text("Settings", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
+                    Spacer(),
+                    Icon(Icons.settings, color: primaryColor),
+                    Container(width: 10)
+                  ],
+                ),
+              ),
+            ),
+            Divider(height: 0),
+
             InkWell(
               onTap: (){
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ReportScreen()));

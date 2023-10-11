@@ -3,6 +3,7 @@ import 'package:chat_app/model/user_model_class.dart';
 import 'package:chat_app/utils/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -10,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 
+import '../../apis/auth_api.dart';
 import '../../model/attributes_model.dart';
 import '../../model/main_group_model.dart';
 import '../../model/occupation_model.dart';
@@ -67,6 +69,8 @@ class RegisterState extends State<Register> {
   bool sub2Representative=false;
   bool sub3Representative=false;
   bool sub4Representative=false;
+
+  String phone='+92';
 
 
   @override
@@ -237,6 +241,7 @@ class RegisterState extends State<Register> {
                             controller: phoneController,
                             decoration: InputDecoration( border: InputBorder.none,labelText: 'PHONE NUMBER'),
                           ),
+
                           const Divider(thickness: 1, color: textColor,),
                           TextField(maxLines: 1,
                             enabled: false,
@@ -1325,92 +1330,89 @@ class RegisterState extends State<Register> {
                       child: Text("SUBMIT", style: TextStyle(color: Colors.white)),
                       onPressed: ()async{
                         if(_formKey.currentState!.validate()){
-                          if(_passwordController.text==_confirmPasswordController.text){
-                            final ProgressDialog pr = ProgressDialog(context: context);
-                            //FirebaseApp app = await Firebase.initializeApp(name: 'Secondary', options: Firebase.app().options);
-                            pr.show(max: 100, msg: "Please wait");
-                            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                                email: emailController.text.trim(),
-                                password: _passwordController.text
-                            ).then((value)async{
-                              Map<String,dynamic> userData={
+                          Map<String,dynamic> userData={
 
-                                "email":emailController.text,
-                                "password":_passwordController.text,
-                                "name":widget.invitedUser.name,
-                                "displayName":_displayController.text,
-                                "fatherName":_fatherNameController.text,
-                                "dob":_dobController.text,
-                                "landline":_landlineController.text,
-                                "mobile":widget.invitedUser.mobile,
-                                "occupation":_occupationController.text,
-                                "jobDescription":_jobdesController.text,
-                                "additionalResponsibility":widget.invitedUser.additionalResponsibility,
-                                "companyName":_companyController.text,
-                                "gender":widget.invitedUser.gender,
-                                "country":_countryController.text,
-                                "additionalResponsibilityCode":widget.invitedUser.additionalResponsibilityCode,
-                                "location":_locationController.text,
-                                "mainGroup":widget.invitedUser.mainGroup,
-                                "mainGroupCode":widget.invitedUser.mainGroupCode,
-                                "subGroup1":widget.invitedUser.subGroup1,
-                                "subGroup1Representative":sub1Representative,
-                                "subGroup1Code":widget.invitedUser.subGroup1Code,
-                                "subGroup2":widget.invitedUser.subGroup2,
-                                "subGroup2Representative":sub2Representative,
-                                "subGroup2Code":widget.invitedUser.subGroup2Code,
-                                "subGroup3":widget.invitedUser.subGroup3,
-                                "subGroup3Representative":sub3Representative,
-                                "subGroup3Code":widget.invitedUser.subGroup3Code,
-                                "subGroup4":widget.invitedUser.subGroup4,
-                                "subGroup4Representative":sub4Representative,
-                                "subGroup4Code":widget.invitedUser.subGroup4Code,
-                                "group":groupCode,
-                                "action":active,
-                                "refer":widget.invitedUser.referer,
-                                "expatriates":expatriates,
-                                "additionalResponsibilityRequired":additionalResponsibilityRequired,
-                                "status":"Active",
-                                "createdAt":DateTime.now().millisecondsSinceEpoch,
-                                "token":"",
-                                "country_main":false,
-                                "country_sub1":false,
-                                "country_sub2":false,
-                                "country_sub3":false,
-                                "country_sub4":false,
-                                "country_occupation":false,
-                                "country_restype":false,
-                                "city_main":false,
-                                "city_sub1":false,
-                                "city_sub2":false,
-                                "city_sub3":true,
-                                "city_sub4":true,
-                                "city_occupation":true,
-                                "city_restype":true,
+                            "email":emailController.text,
+                            "password":_passwordController.text,
+                            "name":widget.invitedUser.name,
+                            "displayName":_displayController.text,
+                            "fatherName":_fatherNameController.text,
+                            "dob":_dobController.text,
+                            "landline":_landlineController.text,
+                            "mobile":widget.invitedUser.mobile,
+                            "occupation":_occupationController.text,
+                            "jobDescription":_jobdesController.text,
+                            "additionalResponsibility":widget.invitedUser.additionalResponsibility,
+                            "companyName":_companyController.text,
+                            "gender":widget.invitedUser.gender,
+                            "country":_countryController.text,
+                            "additionalResponsibilityCode":widget.invitedUser.additionalResponsibilityCode,
+                            "location":_locationController.text,
+                            "mainGroup":widget.invitedUser.mainGroup,
+                            "mainGroupCode":widget.invitedUser.mainGroupCode,
+                            "subGroup1":widget.invitedUser.subGroup1,
+                            "subGroup1Representative":sub1Representative,
+                            "subGroup1Code":widget.invitedUser.subGroup1Code,
+                            "subGroup2":widget.invitedUser.subGroup2,
+                            "subGroup2Representative":sub2Representative,
+                            "subGroup2Code":widget.invitedUser.subGroup2Code,
+                            "subGroup3":widget.invitedUser.subGroup3,
+                            "subGroup3Representative":sub3Representative,
+                            "subGroup3Code":widget.invitedUser.subGroup3Code,
+                            "subGroup4":widget.invitedUser.subGroup4,
+                            "subGroup4Representative":sub4Representative,
+                            "subGroup4Code":widget.invitedUser.subGroup4Code,
+                            "group":groupCode,
+                            "action":active,
+                            "refer":widget.invitedUser.referer,
+                            "expatriates":expatriates,
+                            "additionalResponsibilityRequired":additionalResponsibilityRequired,
+                            "status":"Active",
+                            "createdAt":DateTime.now().millisecondsSinceEpoch,
+                            "token":"",
+                            "country_main":false,
+                            "country_sub1":false,
+                            "country_sub2":false,
+                            "country_sub3":false,
+                            "country_sub4":false,
+                            "country_occupation":false,
+                            "country_restype":false,
+                            "city_main":false,
+                            "city_sub1":false,
+                            "city_sub2":false,
+                            "city_sub3":true,
+                            "city_sub4":true,
+                            "city_occupation":true,
+                            "city_restype":true,
 
-                              };
-                              await FirebaseFirestore.instance.collection('users').doc(value.user!.uid).set(userData);
-                              await FirebaseFirestore.instance.collection('invited_users').doc(widget.invitedUser.id).delete();
-                              final provider = Provider.of<UserDataProvider>(context, listen: false);
-                              provider.setUserData(AppUser.fromMap(userData,FirebaseAuth.instance.currentUser!.uid));
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BottomNavBar()));
-                            }).onError((error, stackTrace){
-                              pr.close();
-                              CoolAlert.show(
-                                context: context,
-                                type: CoolAlertType.error,
-                                text: error.toString(),
-                              );
+                          };
+                          final ProgressDialog pr = ProgressDialog(context: context);
+                          pr.show(max: 100, msg: 'Please Wait',barrierDismissible: true);
+                          final provider = Provider.of<UserDataProvider>(context, listen: false);
+                          AppUser model=AppUser.fromMap(
+                              userData,
+                              ''
+                          );
+                          provider.setUserData(model);
+                          AuthenticationApi authApi=AuthenticationApi();
+                          bool exists=false;
+                          await FirebaseFirestore.instance.collection('users').where("mobile",isEqualTo: widget.invitedUser.mobile).get().then((QuerySnapshot querySnapshot) {
+                            querySnapshot.docs.forEach((doc) {
+                              Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+                              exists=true;
                             });
-
-                            //await app.delete();
-                          }
-                          else{
+                          });
+                          pr.close();
+                          if(exists){
                             CoolAlert.show(
                               context: context,
                               type: CoolAlertType.error,
-                              text: "Password do not match",
+                              text: 'User already registered',
                             );
+                          }
+                          else{
+                            authApi.verifyPhoneNumber(widget.invitedUser.mobile, context, 0);
+
                           }
                         }
                       },

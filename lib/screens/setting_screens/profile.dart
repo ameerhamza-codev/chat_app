@@ -17,6 +17,7 @@ import '../../model/attributes_model.dart';
 import '../../model/main_group_model.dart';
 import '../../model/occupation_model.dart';
 import '../../provider/user_data_provider.dart';
+import 'edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -49,6 +50,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               ListTile(
                 title: Text("Basic Information",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500),),
+                trailing: InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditProfile()));
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width*0.3,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text("Edit", style: TextStyle(color: textColor,fontSize: 16, fontWeight: FontWeight.w300)),
+                        SizedBox(width: 10,),
+                        Icon(Icons.edit, color: primaryColor),
+                        Container(width: 10)
+                      ],
+                    ),
+                  ),
+                ),
               ),
               ListTile(
                 title: Text("Email"),

@@ -8,4 +8,9 @@ class UserDataProvider extends ChangeNotifier {
     userData = user;
     notifyListeners();
   }
+
+  void setUserId(String id) {
+    userData!.userId = id;
+    notifyListeners();
+  }
 }

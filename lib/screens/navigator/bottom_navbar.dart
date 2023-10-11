@@ -25,7 +25,7 @@ class _BottomNavigationState extends State<BottomNavBar>{
     _children = const [
        MainChat(),
        Groups(),
-       Settings()
+
     ];
   }
 
@@ -56,7 +56,7 @@ class _BottomNavigationState extends State<BottomNavBar>{
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Icon(Icons.chat,size: 30,color: _currentIndex==0?primaryColor:textColor),
-                    Text("Chats", style: TextStyle(color: _currentIndex==0?primaryColor:textColor),)
+                    //Text("Chats", style: TextStyle(color: _currentIndex==0?primaryColor:textColor),)
                   ],
                 ),
               ),
@@ -69,11 +69,11 @@ class _BottomNavigationState extends State<BottomNavBar>{
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Icon(Icons.group,size: 30,color: _currentIndex==1?primaryColor:textColor),
-                    Text("Groups", style: TextStyle(color: _currentIndex==1?primaryColor:textColor),)
+                    //Text("Groups", style: TextStyle(color: _currentIndex==1?primaryColor:textColor),)
                   ],
                 ),
               ),
-              InkWell(
+              /*InkWell(
                 onTap: (){
                   onTabTapped(2);
                 },
@@ -85,7 +85,7 @@ class _BottomNavigationState extends State<BottomNavBar>{
                     Text("Settings", style: TextStyle(color: _currentIndex==2?primaryColor:textColor),)
                   ],
                 ),
-              ),
+              ),*/
             ],
           ),
         ),

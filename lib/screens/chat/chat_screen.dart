@@ -315,6 +315,7 @@ class _IndividualChatState extends State<ChatScreen> {
                       },
                     ),
                   ),
+                  if(provider.userData!.subGroup1Representative || provider.userData!.subGroup2Representative || provider.userData!.country_main || provider.userData!.city_main)
                   Consumer<ChatProvider>(
                       builder: (context,chat,child){
                         if(!chat.options)
@@ -390,36 +391,8 @@ class _IndividualChatState extends State<ChatScreen> {
                                               backgroundColor: Colors.red,
                                               child: Icon(Icons.delete,color: Colors.white,),
                                             ),
-                                          )
-                                        else
-                                          InkWell(
-                                            onTap: ()async{
-                                              File imageFile=await _chooseCamera();
-
-                                              await DBApi.storeChat(
-                                                context,
-                                                "uploading",
-                                                widget.chatheadId,
-                                                MediaType.image,
-                                                chat.reply,
-                                                chat.selectedModel==null?"":chat.selectedModel.id,
-                                                chat.selectedModel==null?"":chat.selectedModel.message,
-                                                chat.selectedModel==null?"":chat.selectedModel.mediaType,
-                                                chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
-                                                "all",
-                                                DefaultTabController.of(context)!.index==0?MessageType.social:MessageType.individual,
-                                                false,
-                                                false,
-                                              ).then((value){
-                                                chat.setReply(false);
-                                                ImageApi.uploadFileToFirebase(context, imageFile,value);
-                                              });
-                                            },
-                                            child:  CircleAvatar(
-                                              backgroundColor: primaryColor,
-                                              child: Icon(Icons.camera_alt,color: Colors.white,),
-                                            ),
                                           ),
+
                                         if(chat.recorder.isRecording)
                                           Expanded(
                                               child: Padding(
@@ -479,6 +452,35 @@ class _IndividualChatState extends State<ChatScreen> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
+                                              if(!chat.recorder.isRecording)
+                                                Padding(
+                                                  padding: const EdgeInsets.only(right: 10),
+                                                  child: InkWell(
+                                                    onTap: ()async{
+                                                      File imageFile=await _chooseCamera();
+
+                                                      await DBApi.storeChat(
+                                                        context,
+                                                        "uploading",
+                                                        widget.chatheadId,
+                                                        MediaType.image,
+                                                        chat.reply,
+                                                        chat.selectedModel==null?"":chat.selectedModel.id,
+                                                        chat.selectedModel==null?"":chat.selectedModel.message,
+                                                        chat.selectedModel==null?"":chat.selectedModel.mediaType,
+                                                        chat.selectedModel==null?DateTime.now().millisecondsSinceEpoch:chat.selectedModel.dateTime,
+                                                        "all",
+                                                        DefaultTabController.of(context)!.index==0?MessageType.social:MessageType.individual,
+                                                        false,
+                                                        false,
+                                                      ).then((value){
+                                                        chat.setReply(false);
+                                                        ImageApi.uploadFileToFirebase(context, imageFile,value);
+                                                      });
+                                                    },
+                                                    child:  Icon(Icons.camera_alt,color: Colors.grey,),
+                                                  ),
+                                                ),
                                               if(!chat.recorder.isRecording)
                                                 InkWell(
                                                   onTap: ()async{
