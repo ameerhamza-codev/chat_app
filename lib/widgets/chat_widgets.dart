@@ -1,4 +1,4 @@
-import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
+import 'package:advance_pdf_viewer2/advance_pdf_viewer.dart';
 import 'package:chat_app/screens/doc_viewer.dart';
 import 'package:chat_app/widgets/video_widget.dart';
 import 'package:flutter/cupertino.dart';

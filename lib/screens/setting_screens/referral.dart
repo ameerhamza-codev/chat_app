@@ -1591,7 +1591,7 @@ class _ReferalState extends State<Referal> {
                   color: primaryColor,
                 ),
                 alignment: Alignment.center,
-                child: Text("Invite",style: Theme.of(context).textTheme.button!.apply(color: Colors.white),),
+                child: Text("Invite",style: TextStyle(color:Colors.white),),
               ),
             )
           ],

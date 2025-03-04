@@ -1,4 +1,4 @@
-import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
+
 import 'package:chat_app/model/announcement_model.dart';
 import 'package:chat_app/provider/user_data_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,7 +15,7 @@ import '../../utils/voice_message.dart';
 import '../../widgets/video_widget.dart';
 import '../doc_viewer.dart';
 import '../image_viewer.dart';
-
+import 'package:advance_pdf_viewer2/advance_pdf_viewer.dart';
 class Announcements extends StatefulWidget {
   String infoId;
 
